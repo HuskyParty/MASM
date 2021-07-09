@@ -1,0 +1,46 @@
+Program Description:
+Y/N - Display your name and program title on the output screen.
+
+Y/N - Display instructions for the user.
+
+Y/N - Prompt the user to enter three numbers (A, B, C) in strictly descending order.
+
+Y/N - Calculate and display the sum and differences: (A+B, A-B, A+C, A-C, B+C, B-C, A+B+C).
+
+Y/N - Display a closing message.
+
+Program Requirements:
+Y/N - Fully documented
+	Y/N - Header block each section of code
+	Y/N - comments
+
+Y/N - Main pro divided as follows
+	-introduction
+	-get the data
+	-calculate the required values
+	-display the results
+	-say goodbye
+
+Y/N - result calculations stored in named variables before displaying
+
+Y/N - Turn in Proj1_Baxs.asm
+
+
+
+------------------------example executation----------------------
+
+         Elementary Arithmetic     by Wile E. Coyote
+Enter 3 numbers A > B > C, and I'll show you the sums and differences.
+First number: 20
+Second number: 10 
+Third number: 5
+
+20 + 10 = 30
+20 - 10 = 10
+20 + 5 = 25
+20 - 5 = 15
+10 + 5 = 15
+10 - 5 = 5
+20 + 10 + 5 = 35
+
+Thanks for using Elementary Arithmetic!  Goodbye!

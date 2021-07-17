@@ -12,12 +12,12 @@ INCLUDE Irvine32.inc
 
 ; (insert macro definitions here)
 
-MAX_FILE_SIZE = 1000
+MAX_FILE_SIZE = 1400
 
 .data
 greeting        BYTE    "Welcome to the Debugging Tutorial Program!",13,10
                 BYTE    "You are User Number ",0
-fileName        BYTE    "Test.txt",0
+fileName        BYTE    "TestText.txt",0
 fileHandle      DWORD   ?
 fileBuffer      BYTE    MAX_FILE_SIZE DUP(?)
 bytesRead       DWORD   ?
@@ -46,7 +46,7 @@ main PROC
 _validName:
   MOV   EAX, fileHandle
   MOV   EDX, OFFSET fileBuffer 
-  MOV   ECX, MAX_FILE_SIZE
+  MOV   ECX, MAX_FILE_SIZE - 1
   CALL  ReadFromFile
   MOV   bytesRead, EAX
   JNC   _validRead    ;Jump if No Error in Reading File

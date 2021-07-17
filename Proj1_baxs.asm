@@ -1,4 +1,4 @@
-TITLE Project 1 - Basic Logic and Arithmetic Program     (Proj1_Baxs.asm)
+TITLE Project 1 - Basic Logic and Arithmetic Programc
 
 ; Author: Scott Bax
 ; Last Modified: 3 JuLy 2021

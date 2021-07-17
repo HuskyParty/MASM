@@ -33,8 +33,13 @@ invalid_num_prompt 	BYTE	"Wrong Number!", 0
 number_input		SDWORD	?		  ; user number input
 min_value			SDWORD	?		  	  
 max_value			SDWORD	?		  
-sum_value			SDWORD	?		  
+sum_value			SDWORD	?
+average_value		SDWORD	?
+average_remainder	SDWORD	?
+average_value1		SDWORD	?
+average_remainder1	SDWORD	?
 valid_numbers		DWORD	0
+
 
 ;Display result prompts
 valid_number_res1_p	BYTE	"You entered ", 0
@@ -44,9 +49,10 @@ max_value_res_p		BYTE	"The maximum valid number is ", 0
 sum_value_res_p		BYTE	"The valid numbers sum is ", 0
 
 
-; Done
-finished_prompt		BYTE	"DONE DONE DONE", 0
-
+; Farewell prompt
+no_valid_numbers_p	BYTE	"No valid numbers were entered.", 0
+finished_prompt1	BYTE	"Thanks for using this program. See ya, ", 0
+finished_prompt2	BYTE	"!", 0
 .code
 main PROC
 
@@ -120,7 +126,7 @@ main PROC
 	above_neg_fifty:
 
 		cmp		number_input, -1
-		jg		data_calc		;below -200
+		jg		data_calc		;positive number entered
 		jmp		right_number
 
 
@@ -215,8 +221,29 @@ main PROC
 ; -------------------------
 	;To execute if number is above neg fifty
 	data_calc:
-		
-		
+
+		; if get here without any valid numbers
+		mov		EAX, 1
+		cmp		valid_numbers, EAX
+		jb		no_valid_numbers 
+
+		;calculate average by dividing sum by valid numbers
+		mov		EAX, sum_value
+		CDQ
+		idiv	valid_numbers
+
+		mov		average_value, EAX
+
+		mov		EAX, average_value
+		mov		average_remainder, EDX
+		call	Crlf
+		call	WriteInt
+
+		mov		EAX, average_remainder
+		call	Crlf
+		call	WriteInt
+
+
 
 
 ; -------------------------
@@ -258,11 +285,36 @@ main PROC
 	call	WriteInt			; dislpay number
 	call	Crlf
 
-
-
+	;jump to farewell
+	jmp		goodbye
 ; -------------------------
 ;  PARTING MESSAGE - Display farewell to user
 ; -------------------------
+	
+	;special message if no valild numbers were entered
+	no_valid_numbers:
+	
+		mov		EDX, OFFSET no_valid_numbers_p		; no valid num prompt
+		call	Crlf
+		call	WriteString
+		call	Crlf
+
+	;goodbye message
+	goodbye:
+
+		;prompt par 1
+		call	Crlf
+		mov		EDX, OFFSET finished_prompt1
+		call	WriteString
+
+		;user's name
+		mov		EDX, OFFSET user_name
+		call	WriteString
+
+		;prompt part 2
+		mov		EDX, OFFSET finished_prompt2
+		call	WriteString
+		call	Crlf
 
 	Invoke ExitProcess,0	; exit to operating system
 main ENDP

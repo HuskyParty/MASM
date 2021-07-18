@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/17/21 12:37:39
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/17/21 18:33:23
 <Project 3 - Data Validation, Looping, and Constants     (Pr  Page 1 - 1
 
 
@@ -54,20 +54,31 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/17/21 12:37:39
 	   6E 64 20 43 6F
 	   6E 73 74 61 6E
 	   74 73 00
- 00000049 57 68 61 74 20	user_name_prompt	BYTE	"What is your name? ", 0
+ 00000049 2A 2A 45 43 3A	extra_credit		BYTE	"**EC: Increments line number for valid user inputs", 0
+	   20 49 6E 63 72
+	   65 6D 65 6E 74
+	   73 20 6C 69 6E
+	   65 20 6E 75 6D
+	   62 65 72 20 66
+	   6F 72 20 76 61
+	   6C 69 64 20 75
+	   73 65 72 20 69
+	   6E 70 75 74 73
+	   00
+ 0000007C 57 68 61 74 20	user_name_prompt	BYTE	"What is your name? ", 0
 	   69 73 20 79 6F
 	   75 72 20 6E 61
 	   6D 65 3F 20 00
- 0000005D  00000021 [		user_name			BYTE	33 DUP(0) ; User name to be entered
+ 00000090  00000021 [		user_name			BYTE	33 DUP(0) ; User name to be entered
 	    00
 	   ]
- 0000007E 48 65 79 20 77	user_greeting		BYTE	"Hey what's up, ", 0
+ 000000B1 48 65 79 20 77	user_greeting		BYTE	"Hey what's up, ", 0
 	   68 61 74 27 73
 	   20 75 70 2C 20
 	   00
 
 				; Data calculation prompt variables
- 0000008E 50 6C 65 61 73	number_req_prompt	BYTE	"Please enter numbers between [-200, -100] or between [-50, -1].", 0
+ 000000C1 50 6C 65 61 73	number_req_prompt	BYTE	"Please enter numbers between [-200, -100] or between [-50, -1].", 0
 	   65 20 65 6E 74
 	   65 72 20 6E 75
 	   6D 62 65 72 73
@@ -80,7 +91,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/17/21 12:37:39
 	   65 6E 20 5B 2D
 	   35 30 2C 20 2D
 	   31 5D 2E 00
- 000000CE 54 6F 20 73 65	how_finish_prompt	BYTE	"To see the results when you are finished, enter a non-negative number.", 0
+ 00000101 54 6F 20 73 65	how_finish_prompt	BYTE	"To see the results when you are finished, enter a non-negative number.", 0
 	   65 20 74 68 65
 	   20 72 65 73 75
 	   6C 74 73 20 77
@@ -95,63 +106,68 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/17/21 12:37:39
 	   76 65 20 6E 75
 	   6D 62 65 72 2E
 	   00
- 00000115 45 6E 74 65 72	enter_num_prompt 	BYTE	"Enter a number: ", 0
+ 00000148 45 6E 74 65 72	enter_num_prompt 	BYTE	"Enter a number: ", 0
 	   20 61 20 6E 75
 	   6D 62 65 72 3A
 	   20 00
- 00000126 57 72 6F 6E 67	invalid_num_prompt 	BYTE	"Wrong Number!", 0
+ 00000159 2E 20 00		enter_dot_prompt 	BYTE	". ", 0
+ 0000015C 57 72 6F 6E 67	invalid_num_prompt 	BYTE	"Wrong Number!", 0
 	   20 4E 75 6D 62
 	   65 72 21 00
 
 				; Data calculation variables
- 00000134 00000000		number_input		SDWORD	?		  ; user number input
- 00000138 00000000		min_value			SDWORD	?		  	  
- 0000013C 00000000		max_value			SDWORD	?		  
- 00000140 00000000		sum_value			SDWORD	?
- 00000144 00000000		average_value		SDWORD	?
- 00000148 00000000		average_remainder	SDWORD	?
- 0000014C 00000000		average_value1		SDWORD	?
- 00000150 00000000		average_remainder1	SDWORD	?
- 00000154 00000000		valid_numbers		DWORD	0
+ 0000016A 00000000		number_input		SDWORD	?		  ; user number input
+ 0000016E 00000000		min_value			SDWORD	?		  	  
+ 00000172 00000000		max_value			SDWORD	?		  
+ 00000176 00000000		sum_value			SDWORD	?
+ 0000017A 00000000		average_value		SDWORD	?
+ 0000017E 00000000		average_remainder	SDWORD	?
+ 00000182 00000000		average_difference	SDWORD	?
+ 00000186 00000000		valid_numbers		DWORD	0
 
 
 				;Display result prompts
- 00000158 59 6F 75 20 65	valid_number_res1_p	BYTE	"You entered ", 0
+ 0000018A 59 6F 75 20 65	valid_number_res1_p	BYTE	"You entered ", 0
 	   6E 74 65 72 65
 	   64 20 00
- 00000165 20 76 61 6C 69	valid_number_res2_p	BYTE	" valid numbers!", 0
+ 00000197 20 76 61 6C 69	valid_number_res2_p	BYTE	" valid numbers!", 0
 	   64 20 6E 75 6D
 	   62 65 72 73 21
 	   00
- 00000175 54 68 65 20 6D	min_value_res_p		BYTE	"The minimum valid number is ", 0
+ 000001A7 54 68 65 20 6D	min_value_res_p		BYTE	"The minimum valid number is ", 0
 	   69 6E 69 6D 75
 	   6D 20 76 61 6C
 	   69 64 20 6E 75
 	   6D 62 65 72 20
 	   69 73 20 00
- 00000192 54 68 65 20 6D	max_value_res_p		BYTE	"The maximum valid number is ", 0
+ 000001C4 54 68 65 20 6D	max_value_res_p		BYTE	"The maximum valid number is ", 0
 	   61 78 69 6D 75
 	   6D 20 76 61 6C
 	   69 64 20 6E 75
 	   6D 62 65 72 20
 	   69 73 20 00
- 000001AF 54 68 65 20 76	sum_value_res_p		BYTE	"The valid numbers sum is ", 0
+ 000001E1 54 68 65 20 76	sum_value_res_p		BYTE	"The valid numbers sum is ", 0
 	   61 6C 69 64 20
 	   6E 75 6D 62 65
 	   72 73 20 73 75
 	   6D 20 69 73 20
 	   00
+ 000001FB 54 68 65 20 72	average_value_res_p	BYTE	"The rounded average is ", 0
+	   6F 75 6E 64 65
+	   64 20 61 76 65
+	   72 61 67 65 20
+	   69 73 20 00
 
 
 				; Farewell prompt
- 000001C9 4E 6F 20 76 61	no_valid_numbers_p	BYTE	"No valid numbers were entered.", 0
+ 00000213 4E 6F 20 76 61	no_valid_numbers_p	BYTE	"No valid numbers were entered.", 0
 	   6C 69 64 20 6E
 	   75 6D 62 65 72
 	   73 20 77 65 72
 	   65 20 65 6E 74
 	   65 72 65 64 2E
 	   00
- 000001E8 54 68 61 6E 6B	finished_prompt1	BYTE	"Thanks for using this program. See ya, ", 0
+ 00000232 54 68 61 6E 6B	finished_prompt1	BYTE	"Thanks for using this program. See ya, ", 0
 	   73 20 66 6F 72
 	   20 75 73 69 6E
 	   67 20 74 68 69
@@ -159,295 +175,300 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/17/21 12:37:39
 	   67 72 61 6D 2E
 	   20 53 65 65 20
 	   79 61 2C 20 00
- 00000210 21 00			finished_prompt2	BYTE	"!", 0
+ 0000025A 21 00			finished_prompt2	BYTE	"!", 0
  00000000			.code
  00000000			main PROC
 
 				; -------------------------
 				; INTRODUCTION - Display program title and programmer's name. Get user name and greet them.
 				; -------------------------
-					;title
+					;title, name, extra credit
  00000000  BA 00000000 R		mov		EDX, OFFSET program_title
  00000005  E8 00000000 E		call	WriteString
  0000000A  E8 00000000 E		call	Crlf
- 0000000F  E8 00000000 E		call	Crlf
+
+ 0000000F  BA 00000049 R		mov		EDX, OFFSET extra_credit
+ 00000014  E8 00000000 E		call	WriteString
+ 00000019  E8 00000000 E		call	Crlf
+ 0000001E  E8 00000000 E		call	Crlf
 
 					;get user name
- 00000014  BA 00000049 R		mov		EDX, OFFSET user_name_prompt
- 00000019  E8 00000000 E		call WriteString
- 0000001E  BA 0000005D R		mov		EDX, OFFSET user_name
- 00000023  B9 00000021			mov		ECX, 33
- 00000028  E8 00000000 E		call ReadString
+ 00000023  BA 0000007C R		mov		EDX, OFFSET user_name_prompt
+ 00000028  E8 00000000 E		call WriteString
+ 0000002D  BA 00000090 R		mov		EDX, OFFSET user_name
+ 00000032  B9 00000021			mov		ECX, 33
+ 00000037  E8 00000000 E		call ReadString
 
 					;greet user
- 0000002D  BA 0000007E R		mov		EDX, OFFSET user_greeting
- 00000032  E8 00000000 E		call WriteString
- 00000037  BA 0000005D R		mov		EDX, OFFSET user_name
- 0000003C  E8 00000000 E		call WriteString
- 00000041  E8 00000000 E		call	Crlf
- 00000046  E8 00000000 E		call	Crlf
- 0000004B  E8 00000000 E		call	Crlf
+ 0000003C  BA 000000B1 R		mov		EDX, OFFSET user_greeting
+ 00000041  E8 00000000 E		call WriteString
+ 00000046  BA 00000090 R		mov		EDX, OFFSET user_name
+ 0000004B  E8 00000000 E		call WriteString
+ 00000050  E8 00000000 E		call	Crlf
+ 00000055  E8 00000000 E		call	Crlf
+ 0000005A  E8 00000000 E		call	Crlf
 
 				; -------------------------
 				; INSTRUCTIONS/GET DATA - Displays instructions to user. Get data from user
 				; -------------------------
 
 					;ask for numbers with parameters
- 00000050  BA 0000008E R		mov		EDX, OFFSET number_req_prompt
- 00000055  E8 00000000 E		call	WriteString
- 0000005A  E8 00000000 E		call	Crlf
-
-					;tell how to finish
- 0000005F  BA 000000CE R		mov		EDX, OFFSET how_finish_prompt
+ 0000005F  BA 000000C1 R		mov		EDX, OFFSET number_req_prompt
  00000064  E8 00000000 E		call	WriteString
  00000069  E8 00000000 E		call	Crlf
 
+					;tell how to finish
+ 0000006E  BA 00000101 R		mov		EDX, OFFSET how_finish_prompt
+ 00000073  E8 00000000 E		call	WriteString
+ 00000078  E8 00000000 E		call	Crlf
+
 					;ask for a number between [-200, -100] or between [-50, -1] while looping
- 0000006E				ask_number:
+ 0000007D				ask_number:
 						
 						;prompt
- 0000006E  BA 00000115 R			mov		EDX, OFFSET enter_num_prompt
- 00000073  E8 00000000 E			call	WriteString
+ 0000007D  A1 00000186 R			mov		EAX, valid_numbers
+ 00000082  E8 00000000 E			call	WriteDec				; adding line number for valid user inputs
+
+ 00000087  BA 00000159 R			mov		EDX, OFFSET	enter_dot_prompt
+ 0000008C  E8 00000000 E			call	WriteString				; adds period
+
+ 00000091  BA 00000148 R			mov		EDX, OFFSET enter_num_prompt
+ 00000096  E8 00000000 E			call	WriteString
 
 						;get number
- 00000078  E8 00000000 E			call	ReadInt				; number now in variable
- 0000007D  A3 00000134 R			mov		number_input, EAX
+ 0000009B  E8 00000000 E			call	ReadInt				; number now in variable
+ 000000A0  A3 0000016A R			mov		number_input, EAX
 
 
 						;if number is not within range and not non-negative 
 
- 00000082  83 3D 00000134 R			cmp		number_input, -51
+ 000000A5  83 3D 0000016A R			cmp		number_input, -51
 	   CD
- 00000089  7F 17				jg		above_neg_fifty		;above -50
+ 000000AC  7F 17				jg		above_neg_fifty		;above -50
 
- 0000008B  81 3D 00000134 R			cmp		number_input, -200
+ 000000AE  81 3D 0000016A R			cmp		number_input, -200
 	   FFFFFF38
- 00000095  7C 1A				jl		wrong_number		;below -200
+ 000000B8  7C 1A				jl		wrong_number		;below -200
 
- 00000097  83 3D 00000134 R			cmp		number_input, -99
+ 000000BA  83 3D 0000016A R			cmp		number_input, -99
 	   9D
- 0000009E  7D 11				jnl		wrong_number		;above -100
+ 000000C1  7D 11				jnl		wrong_number		;above -100
 
 						;loop again
- 000000A0  EB 20				jmp		right_number
+ 000000C3  EB 20				jmp		right_number
 
 
 					;To execute if number is above neg fifty
- 000000A2				above_neg_fifty:
+ 000000C5				above_neg_fifty:
 
- 000000A2  83 3D 00000134 R			cmp		number_input, -1
+ 000000C5  83 3D 0000016A R			cmp		number_input, -1
 	   FF
- 000000A9  0F 8F 00000090			jg		data_calc		;positive number entered
- 000000AF  EB 11				jmp		right_number
-
-
-					
-					
+ 000000CC  0F 8F 00000090			jg		data_calc		;positive number entered
+ 000000D2  EB 11				jmp		right_number
 
 					;To execute if wrong number is entered
- 000000B1				wrong_number:
+ 000000D4				wrong_number:
 
 						;Error mesage
- 000000B1  BA 00000126 R			mov		EDX, OFFSET invalid_num_prompt
- 000000B6  E8 00000000 E			call	WriteString
- 000000BB  E8 00000000 E			call	Crlf
+ 000000D4  BA 0000015C R			mov		EDX, OFFSET invalid_num_prompt
+ 000000D9  E8 00000000 E			call	WriteString
+ 000000DE  E8 00000000 E			call	Crlf
 
 						;go back to ask number loop
- 000000C0  EB AC				jmp		ask_number
-					
+ 000000E3  EB 98				jmp		ask_number
 
 					;To execute if right number is entered. will track number of valid numbers/min and max value
- 000000C2				right_number:
+ 000000E5				right_number:
 
 
 						;count valid numbers
- 000000C2  B8 00000001				mov		EAX, 1
- 000000C7  8B 1D 00000154 R			mov		EBX, valid_numbers
- 000000CD  03 C3				add		EAX, EBX
- 000000CF  A3 00000154 R			mov		valid_numbers, EAX
+ 000000E5  B8 00000001				mov		EAX, 1
+ 000000EA  8B 1D 00000186 R			mov		EBX, valid_numbers
+ 000000F0  03 C3				add		EAX, EBX
+ 000000F2  A3 00000186 R			mov		valid_numbers, EAX
 
 						;update sum of valid numbers
- 000000D4  8B 1D 00000134 R			mov		EBX, number_input
- 000000DA  01 1D 00000140 R			add		sum_value, EBX
+ 000000F7  8B 1D 0000016A R			mov		EBX, number_input
+ 000000FD  01 1D 00000176 R			add		sum_value, EBX
 
 
 						;initialize both min/max variables to first input
- 000000E0  83 3D 00000154 R			cmp		valid_numbers, 1
+ 00000103  83 3D 00000186 R			cmp		valid_numbers, 1
 	   01
- 000000E7  74 1F				je		initialize_min_max
+ 0000010A  74 1F				je		initialize_min_max
 
 
 						;track min value
- 000000E9  A1 00000134 R			mov		EAX, number_input
- 000000EE  39 05 00000138 R			cmp		min_value, EAX
- 000000F4  7F 2B				jg		update_min
+ 0000010C  A1 0000016A R			mov		EAX, number_input
+ 00000111  39 05 0000016E R			cmp		min_value, EAX
+ 00000117  7F 2B				jg		update_min
 
 						;track max value
- 000000F6  A1 00000134 R			mov		EAX, number_input
- 000000FB  39 05 0000013C R			cmp		max_value, EAX
- 00000101  7C 2D				jl		update_max
+ 00000119  A1 0000016A R			mov		EAX, number_input
+ 0000011E  39 05 00000172 R			cmp		max_value, EAX
+ 00000124  7C 2D				jl		update_max
 
 						;go back to ask number loop
- 00000103  E9 FFFFFF66				jmp		ask_number
+ 00000126  E9 FFFFFF52				jmp		ask_number
 
 					;initialize both min/max variables to first input
- 00000108				initialize_min_max:
+ 0000012B				initialize_min_max:
 						;update value
- 00000108  A1 00000134 R			mov		EAX, number_input
- 0000010D  A3 00000138 R			mov		min_value, EAX
+ 0000012B  A1 0000016A R			mov		EAX, number_input
+ 00000130  A3 0000016E R			mov		min_value, EAX
 
 						;update value
- 00000112  A1 00000134 R			mov		EAX, number_input
- 00000117  A3 0000013C R			mov		max_value, EAX
-
+ 00000135  A1 0000016A R			mov		EAX, number_input
+ 0000013A  A3 00000172 R			mov		max_value, EAX
 
 						;go back to ask number loop
- 0000011C  E9 FFFFFF4D				jmp		ask_number
-
+ 0000013F  E9 FFFFFF39				jmp		ask_number
 
 					;Updates min value
- 00000121				update_min:
+ 00000144				update_min:
 						
 						;update value
- 00000121  A1 00000134 R			mov		EAX, number_input
- 00000126  A3 00000138 R			mov		min_value, EAX
+ 00000144  A1 0000016A R			mov		EAX, number_input
+ 00000149  A3 0000016E R			mov		min_value, EAX
 
 						;go back to ask number loop
- 0000012B  E9 FFFFFF3E				jmp		ask_number
+ 0000014E  E9 FFFFFF2A				jmp		ask_number
 
 					;Updates max value
- 00000130				update_max:
+ 00000153				update_max:
 
 						;update value
- 00000130  A1 00000134 R			mov		EAX, number_input
- 00000135  A3 0000013C R			mov		max_value, EAX
+ 00000153  A1 0000016A R			mov		EAX, number_input
+ 00000158  A3 00000172 R			mov		max_value, EAX
 
 
 						;go back to ask number loop
- 0000013A  E9 FFFFFF2F				jmp		ask_number
-
-
+ 0000015D  E9 FFFFFF1B				jmp		ask_number
 
 				; -------------------------
 				; CALCULATE DATA - Calculate Data for final results
 				; -------------------------
 					;To execute if number is above neg fifty
- 0000013F				data_calc:
+ 00000162				data_calc:
 
 						; if get here without any valid numbers
- 0000013F  B8 00000001				mov		EAX, 1
- 00000144  39 05 00000154 R			cmp		valid_numbers, EAX
- 0000014A  0F 82 000000D5			jb		no_valid_numbers 
+ 00000162  B8 00000001				mov		EAX, 1
+ 00000167  39 05 00000186 R			cmp		valid_numbers, EAX
+ 0000016D  0F 82 000000D2			jb		no_valid_numbers 
 
 						;calculate average by dividing sum by valid numbers
- 00000150  A1 00000140 R			mov		EAX, sum_value
- 00000155  99					CDQ
- 00000156  F7 3D 00000154 R			idiv	valid_numbers
-
- 0000015C  A3 00000144 R			mov		average_value, EAX
-
- 00000161  A1 00000144 R			mov		EAX, average_value
- 00000166  89 15 00000148 R			mov		average_remainder, EDX
- 0000016C  E8 00000000 E			call	Crlf
- 00000171  E8 00000000 E			call	WriteInt
-
- 00000176  A1 00000148 R			mov		EAX, average_remainder
- 0000017B  E8 00000000 E			call	Crlf
- 00000180  E8 00000000 E			call	WriteInt
-
- 00000185  A1 00000140 R			mov		EAX, sum_value
- 0000018A  99					CDQ
- 0000018B  F7 3D 00000148 R			idiv	average_remainder
-
- 00000191  A3 0000014C R			mov		average_value1, EAX
-
- 00000196  A1 0000014C R			mov		EAX, average_value1
- 0000019B  89 15 00000150 R			mov		average_remainder1, EDX
- 000001A1  E8 00000000 E			call	Crlf
- 000001A6  E8 00000000 E			call	WriteInt
- 000001AB  A1 00000150 R			mov		EAX, average_remainder1
- 000001B0  E8 00000000 E			call	WriteInt
+ 00000173  A1 00000176 R			mov		EAX, sum_value
+ 00000178  99					CDQ
+ 00000179  F7 3D 00000186 R			idiv	valid_numbers
+ 0000017F  A3 0000017A R			mov		average_value, EAX
 
 
+ 00000184  6B DA FF				imul	EBX, EDX, -1			;make the remainder non-negative
+ 00000187  89 1D 0000017E R			mov		average_remainder, EBX
+ 0000018D  BB 00000000				mov		EBX, 0					;reset EBX value
+
+
+						;find difference between remainder and divsor
+ 00000192  8B 1D 0000017E R			mov		EBX, average_remainder
+ 00000198  A1 00000186 R			mov		EAX, valid_numbers
+ 0000019D  2B C3				sub		EAX, EBX
+
+ 0000019F  A3 00000182 R			mov		average_difference, EAX
+
+						;calculate average by dividing sum by valid numbers
+ 000001A4  A1 00000182 R			mov		EAX, average_difference
+ 000001A9  39 05 0000017E R			cmp		average_remainder, EAX
+ 000001AF  7C 0B				jl		skip_rounding_up
+ 000001B1  B8 FFFFFFFF				mov		EAX, -1
+ 000001B6  01 05 0000017A R			add		average_value, EAX
+
+					;rounding up got skipped
+ 000001BC				skip_rounding_up:
+						
 				; -------------------------
 				; DISPLAY DATA - Calculate Data for final results
 				; -------------------------
 
 					;display number of valid numbers entered 
- 000001B5  BA 00000158 R		mov		EDX, OFFSET valid_number_res1_p
- 000001BA  E8 00000000 E		call	WriteString			; display prompt part 1
+ 000001BC  BA 0000018A R		mov		EDX, OFFSET valid_number_res1_p
+ 000001C1  E8 00000000 E		call	WriteString			; display prompt part 1
 
- 000001BF  A1 00000154 R		mov		EAX, valid_numbers
- 000001C4  E8 00000000 E		call	WriteDec			; dislpay number
+ 000001C6  A1 00000186 R		mov		EAX, valid_numbers
+ 000001CB  E8 00000000 E		call	WriteDec			; dislpay number
 
- 000001C9  BA 00000165 R		mov		EDX, OFFSET valid_number_res2_p
- 000001CE  E8 00000000 E		call	WriteString			; display prompt part 1
- 000001D3  E8 00000000 E		call	Crlf
+ 000001D0  BA 00000197 R		mov		EDX, OFFSET valid_number_res2_p
+ 000001D5  E8 00000000 E		call	WriteString			; display prompt part 1
+ 000001DA  E8 00000000 E		call	Crlf
 
 					;display max value
- 000001D8  BA 00000192 R		mov		EDX, OFFSET max_value_res_p
- 000001DD  E8 00000000 E		call	WriteString			; display prompt
+ 000001DF  BA 000001C4 R		mov		EDX, OFFSET max_value_res_p
+ 000001E4  E8 00000000 E		call	WriteString			; display prompt
 
- 000001E2  A1 0000013C R		mov		EAX, max_value
- 000001E7  E8 00000000 E		call	WriteInt			; dislpay number
- 000001EC  E8 00000000 E		call	Crlf
+ 000001E9  A1 00000172 R		mov		EAX, max_value
+ 000001EE  E8 00000000 E		call	WriteInt			; dislpay number
+ 000001F3  E8 00000000 E		call	Crlf
 
 					;display min value
- 000001F1  BA 00000175 R		mov		EDX, OFFSET min_value_res_p
- 000001F6  E8 00000000 E		call	WriteString			; display prompt
+ 000001F8  BA 000001A7 R		mov		EDX, OFFSET min_value_res_p
+ 000001FD  E8 00000000 E		call	WriteString			; display prompt
 
- 000001FB  A1 00000138 R		mov		EAX, min_value
- 00000200  E8 00000000 E		call	WriteInt			; dislpay number
- 00000205  E8 00000000 E		call	Crlf
+ 00000202  A1 0000016E R		mov		EAX, min_value
+ 00000207  E8 00000000 E		call	WriteInt			; dislpay number
+ 0000020C  E8 00000000 E		call	Crlf
 
 					;display sum value
- 0000020A  BA 000001AF R		mov		EDX, OFFSET sum_value_res_p
- 0000020F  E8 00000000 E		call	WriteString			; display prompt
+ 00000211  BA 000001E1 R		mov		EDX, OFFSET sum_value_res_p
+ 00000216  E8 00000000 E		call	WriteString			; display prompt
 
- 00000214  A1 00000140 R		mov		EAX, sum_value
- 00000219  E8 00000000 E		call	WriteInt			; dislpay number
- 0000021E  E8 00000000 E		call	Crlf
+ 0000021B  A1 00000176 R		mov		EAX, sum_value
+ 00000220  E8 00000000 E		call	WriteInt			; dislpay number
+ 00000225  E8 00000000 E		call	Crlf
 
+					;display average value
+ 0000022A  BA 000001FB R		mov		EDX, OFFSET average_value_res_p
+ 0000022F  E8 00000000 E		call	WriteString			; display prompt
+ 00000234  A1 0000017A R		mov		EAX, average_value
+ 00000239  E8 00000000 E		call	WriteInt			; display prompt
+ 0000023E  E8 00000000 E		call	Crlf
+					
 					;jump to farewell
- 00000223  EB 14			jmp		goodbye
+ 00000243  EB 14			jmp		goodbye
 				; -------------------------
 				;  PARTING MESSAGE - Display farewell to user
 				; -------------------------
 					
 					;special message if no valild numbers were entered
- 00000225				no_valid_numbers:
+ 00000245				no_valid_numbers:
 					
- 00000225  BA 000001C9 R			mov		EDX, OFFSET no_valid_numbers_p		; no valid num prompt
- 0000022A  E8 00000000 E			call	Crlf
- 0000022F  E8 00000000 E			call	WriteString
- 00000234  E8 00000000 E			call	Crlf
+ 00000245  BA 00000213 R			mov		EDX, OFFSET no_valid_numbers_p		; no valid num prompt
+ 0000024A  E8 00000000 E			call	Crlf
+ 0000024F  E8 00000000 E			call	WriteString
+ 00000254  E8 00000000 E			call	Crlf
 
 					;goodbye message
- 00000239				goodbye:
+ 00000259				goodbye:
 
 						;prompt par 1
- 00000239  E8 00000000 E			call	Crlf
- 0000023E  BA 000001E8 R			mov		EDX, OFFSET finished_prompt1
- 00000243  E8 00000000 E			call	WriteString
+ 00000259  E8 00000000 E			call	Crlf
+ 0000025E  BA 00000232 R			mov		EDX, OFFSET finished_prompt1
+ 00000263  E8 00000000 E			call	WriteString
 
 						;user's name
- 00000248  BA 0000005D R			mov		EDX, OFFSET user_name
- 0000024D  E8 00000000 E			call	WriteString
+ 00000268  BA 00000090 R			mov		EDX, OFFSET user_name
+ 0000026D  E8 00000000 E			call	WriteString
 
 						;prompt part 2
- 00000252  BA 00000210 R			mov		EDX, OFFSET finished_prompt2
- 00000257  E8 00000000 E			call	WriteString
- 0000025C  E8 00000000 E			call	Crlf
+ 00000272  BA 0000025A R			mov		EDX, OFFSET finished_prompt2
+ 00000277  E8 00000000 E			call	WriteString
+ 0000027C  E8 00000000 E			call	Crlf
 
 					Invoke ExitProcess,0	; exit to operating system
- 00000261  6A 00	   *	    push   +000000000h
- 00000263  E8 00000000 E   *	    call   ExitProcess
- 00000268			main ENDP
-
-				; (insert additional procedures here)
+ 00000281  6A 00	   *	    push   +000000000h
+ 00000283  E8 00000000 E   *	    call   ExitProcess
+ 00000288			main ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/17/21 12:37:39
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/17/21 18:33:23
 <Project 3 - Data Validation, Looping, and Constants     (Pr  Symbols 2 - 1
 
 
@@ -541,8 +562,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000212 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000268 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000025C Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000288 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -649,17 +670,18 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000268 Public STDCALL
-  ask_number . . . . . . . . . .	L Near	 0000006E _TEXT	
-  above_neg_fifty  . . . . . . .	L Near	 000000A2 _TEXT	
-  wrong_number . . . . . . . . .	L Near	 000000B1 _TEXT	
-  right_number . . . . . . . . .	L Near	 000000C2 _TEXT	
-  initialize_min_max . . . . . .	L Near	 00000108 _TEXT	
-  update_min . . . . . . . . . .	L Near	 00000121 _TEXT	
-  update_max . . . . . . . . . .	L Near	 00000130 _TEXT	
-  data_calc  . . . . . . . . . .	L Near	 0000013F _TEXT	
-  no_valid_numbers . . . . . . .	L Near	 00000225 _TEXT	
-  goodbye  . . . . . . . . . . .	L Near	 00000239 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000288 Public STDCALL
+  ask_number . . . . . . . . . .	L Near	 0000007D _TEXT	
+  above_neg_fifty  . . . . . . .	L Near	 000000C5 _TEXT	
+  wrong_number . . . . . . . . .	L Near	 000000D4 _TEXT	
+  right_number . . . . . . . . .	L Near	 000000E5 _TEXT	
+  initialize_min_max . . . . . .	L Near	 0000012B _TEXT	
+  update_min . . . . . . . . . .	L Near	 00000144 _TEXT	
+  update_max . . . . . . . . . .	L Near	 00000153 _TEXT	
+  data_calc  . . . . . . . . . .	L Near	 00000162 _TEXT	
+  skip_rounding_up . . . . . . .	L Near	 000001BC _TEXT	
+  no_valid_numbers . . . . . . .	L Near	 00000245 _TEXT	
+  goodbye  . . . . . . . . . . .	L Near	 00000259 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -878,22 +900,24 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-average_remainder1 . . . . . . .	DWord	 00000150 _DATA	
-average_remainder  . . . . . . .	DWord	 00000148 _DATA	
-average_value1 . . . . . . . . .	DWord	 0000014C _DATA	
-average_value  . . . . . . . . .	DWord	 00000144 _DATA	
+average_difference . . . . . . .	DWord	 00000182 _DATA	
+average_remainder  . . . . . . .	DWord	 0000017E _DATA	
+average_value_res_p  . . . . . .	Byte	 000001FB _DATA	
+average_value  . . . . . . . . .	DWord	 0000017A _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-enter_num_prompt . . . . . . . .	Byte	 00000115 _DATA	
+enter_dot_prompt . . . . . . . .	Byte	 00000159 _DATA	
+enter_num_prompt . . . . . . . .	Byte	 00000148 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-finished_prompt1 . . . . . . . .	Byte	 000001E8 _DATA	
-finished_prompt2 . . . . . . . .	Byte	 00000210 _DATA	
+extra_credit . . . . . . . . . .	Byte	 00000049 _DATA	
+finished_prompt1 . . . . . . . .	Byte	 00000232 _DATA	
+finished_prompt2 . . . . . . . .	Byte	 0000025A _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-how_finish_prompt  . . . . . . .	Byte	 000000CE _DATA	
-invalid_num_prompt . . . . . . .	Byte	 00000126 _DATA	
+how_finish_prompt  . . . . . . .	Byte	 00000101 _DATA	
+invalid_num_prompt . . . . . . .	Byte	 0000015C _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -901,23 +925,23 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-max_value_res_p  . . . . . . . .	Byte	 00000192 _DATA	
-max_value  . . . . . . . . . . .	DWord	 0000013C _DATA	
-min_value_res_p  . . . . . . . .	Byte	 00000175 _DATA	
-min_value  . . . . . . . . . . .	DWord	 00000138 _DATA	
-no_valid_numbers_p . . . . . . .	Byte	 000001C9 _DATA	
-number_input . . . . . . . . . .	DWord	 00000134 _DATA	
-number_req_prompt  . . . . . . .	Byte	 0000008E _DATA	
+max_value_res_p  . . . . . . . .	Byte	 000001C4 _DATA	
+max_value  . . . . . . . . . . .	DWord	 00000172 _DATA	
+min_value_res_p  . . . . . . . .	Byte	 000001A7 _DATA	
+min_value  . . . . . . . . . . .	DWord	 0000016E _DATA	
+no_valid_numbers_p . . . . . . .	Byte	 00000213 _DATA	
+number_input . . . . . . . . . .	DWord	 0000016A _DATA	
+number_req_prompt  . . . . . . .	Byte	 000000C1 _DATA	
 program_title  . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-sum_value_res_p  . . . . . . . .	Byte	 000001AF _DATA	
-sum_value  . . . . . . . . . . .	DWord	 00000140 _DATA	
-user_greeting  . . . . . . . . .	Byte	 0000007E _DATA	
-user_name_prompt . . . . . . . .	Byte	 00000049 _DATA	
-user_name  . . . . . . . . . . .	Byte	 0000005D _DATA	
-valid_number_res1_p  . . . . . .	Byte	 00000158 _DATA	
-valid_number_res2_p  . . . . . .	Byte	 00000165 _DATA	
-valid_numbers  . . . . . . . . .	DWord	 00000154 _DATA	
+sum_value_res_p  . . . . . . . .	Byte	 000001E1 _DATA	
+sum_value  . . . . . . . . . . .	DWord	 00000176 _DATA	
+user_greeting  . . . . . . . . .	Byte	 000000B1 _DATA	
+user_name_prompt . . . . . . . .	Byte	 0000007C _DATA	
+user_name  . . . . . . . . . . .	Byte	 00000090 _DATA	
+valid_number_res1_p  . . . . . .	Byte	 0000018A _DATA	
+valid_number_res2_p  . . . . . .	Byte	 00000197 _DATA	
+valid_numbers  . . . . . . . . .	DWord	 00000186 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

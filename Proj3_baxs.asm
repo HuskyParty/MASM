@@ -17,8 +17,12 @@ INCLUDE Irvine32.inc
 
 .data
 
+; Integer Constants
+
+
 ; Intro variables
 program_title		BYTE	"Scott Bax - Project Project 3 -  Data Validation, Looping, and Constants", 0
+extra_credit		BYTE	"**EC: Increments line number for valid user inputs", 0
 user_name_prompt	BYTE	"What is your name? ", 0
 user_name			BYTE	33 DUP(0) ; User name to be entered
 user_greeting		BYTE	"Hey what's up, ", 0
@@ -27,6 +31,7 @@ user_greeting		BYTE	"Hey what's up, ", 0
 number_req_prompt	BYTE	"Please enter numbers between [-200, -100] or between [-50, -1].", 0
 how_finish_prompt	BYTE	"To see the results when you are finished, enter a non-negative number.", 0
 enter_num_prompt 	BYTE	"Enter a number: ", 0
+enter_dot_prompt 	BYTE	". ", 0
 invalid_num_prompt 	BYTE	"Wrong Number!", 0
 
 ; Data calculation variables
@@ -36,8 +41,7 @@ max_value			SDWORD	?
 sum_value			SDWORD	?
 average_value		SDWORD	?
 average_remainder	SDWORD	?
-average_value1		SDWORD	?
-average_remainder1	SDWORD	?
+average_difference	SDWORD	?
 valid_numbers		DWORD	0
 
 
@@ -47,6 +51,7 @@ valid_number_res2_p	BYTE	" valid numbers!", 0
 min_value_res_p		BYTE	"The minimum valid number is ", 0
 max_value_res_p		BYTE	"The maximum valid number is ", 0
 sum_value_res_p		BYTE	"The valid numbers sum is ", 0
+average_value_res_p	BYTE	"The rounded average is ", 0
 
 
 ; Farewell prompt
@@ -59,8 +64,12 @@ main PROC
 ; -------------------------
 ; INTRODUCTION - Display program title and programmer's name. Get user name and greet them.
 ; -------------------------
-	;title
+	;title, name, extra credit
 	mov		EDX, OFFSET program_title
+	call	WriteString
+	call	Crlf
+
+	mov		EDX, OFFSET extra_credit
 	call	WriteString
 	call	Crlf
 	call	Crlf
@@ -99,6 +108,12 @@ main PROC
 	ask_number:
 		
 		;prompt
+		mov		EAX, valid_numbers
+		call	WriteDec				; adding line number for valid user inputs
+
+		mov		EDX, OFFSET	enter_dot_prompt
+		call	WriteString				; adds period
+
 		mov		EDX, OFFSET enter_num_prompt
 		call	WriteString
 
@@ -129,10 +144,6 @@ main PROC
 		jg		data_calc		;positive number entered
 		jmp		right_number
 
-
-	
-	
-
 	;To execute if wrong number is entered
 	wrong_number:
 
@@ -143,7 +154,6 @@ main PROC
 
 		;go back to ask number loop
 		jmp		ask_number
-	
 
 	;To execute if right number is entered. will track number of valid numbers/min and max value
 	right_number:
@@ -188,10 +198,8 @@ main PROC
 		mov		EAX, number_input
 		mov		max_value, EAX
 
-
 		;go back to ask number loop
 		jmp		ask_number
-
 
 	;Updates min value
 	update_min:
@@ -214,8 +222,6 @@ main PROC
 		;go back to ask number loop
 		jmp		ask_number
 
-
-
 ; -------------------------
 ; CALCULATE DATA - Calculate Data for final results
 ; -------------------------
@@ -231,21 +237,31 @@ main PROC
 		mov		EAX, sum_value
 		CDQ
 		idiv	valid_numbers
-
 		mov		average_value, EAX
 
-		mov		EAX, average_value
-		mov		average_remainder, EDX
-		call	Crlf
-		call	WriteInt
 
-		mov		EAX, average_remainder
-		call	Crlf
-		call	WriteInt
+		imul	EBX, EDX, -1			;make the remainder non-negative
+		mov		average_remainder, EBX
+		mov		EBX, 0					;reset EBX value
 
 
+		;find difference between remainder and divsor
+		mov		EBX, average_remainder
+		mov		EAX, valid_numbers
+		sub		EAX, EBX
 
+		mov		average_difference, EAX
 
+		;calculate average by dividing sum by valid numbers
+		mov		EAX, average_difference
+		cmp		average_remainder, EAX
+		jl		skip_rounding_up
+		mov		EAX, -1
+		add		average_value, EAX
+
+	;rounding up got skipped
+	skip_rounding_up:
+		
 ; -------------------------
 ; DISPLAY DATA - Calculate Data for final results
 ; -------------------------
@@ -285,6 +301,13 @@ main PROC
 	call	WriteInt			; dislpay number
 	call	Crlf
 
+	;display average value
+	mov		EDX, OFFSET average_value_res_p
+	call	WriteString			; display prompt
+	mov		EAX, average_value
+	call	WriteInt			; display prompt
+	call	Crlf
+	
 	;jump to farewell
 	jmp		goodbye
 ; -------------------------
@@ -318,7 +341,5 @@ main PROC
 
 	Invoke ExitProcess,0	; exit to operating system
 main ENDP
-
-; (insert additional procedures here)
 
 END main

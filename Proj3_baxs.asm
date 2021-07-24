@@ -18,6 +18,10 @@ INCLUDE Irvine32.inc
 .data
 
 ; Integer Constants
+neg_200 = -200
+neg_100 = -100
+neg_50  = -50
+neg_1	= -1
 
 
 ; Intro variables
@@ -43,6 +47,7 @@ average_value		SDWORD	?
 average_remainder	SDWORD	?
 average_difference	SDWORD	?
 valid_numbers		DWORD	0
+number_lines		DWORD	1
 
 
 ;Display result prompts
@@ -108,7 +113,7 @@ main PROC
 	ask_number:
 		
 		;prompt
-		mov		EAX, valid_numbers
+		mov		EAX, number_lines
 		call	WriteDec				; adding line number for valid user inputs
 
 		mov		EDX, OFFSET	enter_dot_prompt
@@ -121,28 +126,23 @@ main PROC
 		call	ReadInt				; number now in variable
 		mov		number_input, EAX
 
+		;Loop terminates if user input is positive
+		jns		data_calc
+
 
 		;if number is not within range and not non-negative 
+		cmp		number_input, neg_50
+		jge		right_number		;above -50
 
-		cmp		number_input, -51
-		jg		above_neg_fifty		;above -50
-
-		cmp		number_input, -200
+		cmp		number_input, neg_200
 		jl		wrong_number		;below -200
 
-		cmp		number_input, -99
-		jnl		wrong_number		;above -100
+		cmp		number_input, neg_100
+		jnle		wrong_number		;above -100
 
 		;loop again
 		jmp		right_number
 
-
-	;To execute if number is above neg fifty
-	above_neg_fifty:
-
-		cmp		number_input, -1
-		jg		data_calc		;positive number entered
-		jmp		right_number
 
 	;To execute if wrong number is entered
 	wrong_number:
@@ -159,11 +159,17 @@ main PROC
 	right_number:
 
 
-		;count valid numbers
+		;update valid numbers
 		mov		EAX, 1
 		mov		EBX, valid_numbers
 		add		EAX, EBX
 		mov		valid_numbers, EAX
+
+		;update number lines
+		mov		EAX, 1
+		mov		EBX, number_lines
+		add		EAX, EBX
+		mov		number_lines, EAX
 
 		;update sum of valid numbers
 		mov		EBX, number_input

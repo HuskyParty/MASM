@@ -13,7 +13,7 @@ TITLE Project 4 - Prime Number Calculator     (Proj4_baxs.asm)
 INCLUDE Irvine32.inc
 
 ; Integer Constants
-UPPERBOUND = 200
+UPPERBOUND = 4000
 LOWERBOUND = 1
 
 .data
@@ -27,20 +27,22 @@ numberReqPrompt1	BYTE	"Please enter the amount of prime numbers you would like t
 numberReqPrompt2	BYTE	"The number must be within the range of [1, 200].", 0
 enterNumberPrompt	BYTE	"Enter the number of primes to display: ", 0
 wrongNumberPrompt	BYTE	"Wrong number, try again.", 0
+
 			
 
 ; Data calculation variables
 numberInput			SDWORD	?		  ; user number input
 divByTen			SDWORD	?
+numSpace			BYTE	" ", 0
 
 
 .code
 main PROC
 
-	call introduction
-	call getUserData
-	call showPrimes
-	call farewell
+	CALL introduction
+	CALL getUserData
+	CALL showPrimes
+	CALL farewell
 
 	Invoke ExitProcess,0	; exit to operating system
 main ENDP
@@ -64,33 +66,33 @@ main ENDP
 introduction PROC
 	
 	; title, name, extra credit
-	mov		EDX, OFFSET programTitle
-	call	WriteString
-	call	Crlf
+	MOV		EDX, OFFSET programTitle
+	CALL	WriteString
+	CALL	Crlf
 
-	mov		EDX, OFFSET extraCredit
-	call	WriteString
-	call	Crlf
-	call	Crlf
+	MOV		EDX, OFFSET extraCredit
+	CALL	WriteString
+	CALL	Crlf
+	CALL	Crlf
 
 	; input instructions
-	mov		EDX, OFFSET numberReqPrompt1 
-	call	WriteString
-	call	Crlf
+	MOV		EDX, OFFSET numberReqPrompt1 
+	CALL	WriteString
+	CALL	Crlf
 
-	mov		EDX, OFFSET numberReqPrompt2	; lines 1 - 2 of instructions
-	call	WriteString
-	call	Crlf
-	call	Crlf
+	MOV		EDX, OFFSET numberReqPrompt2	; lines 1 - 2 of instructions
+	CALL	WriteString
+	CALL	Crlf
+	CALL	Crlf
 
-	ret
+	RET
 introduction ENDP
 
 ; ---------------------------------------------------------------------------------
 ; Name: getUserData
 ; 
 ; The procedure prompts the user to enter the number of primes to be displayed,
-;		stores that data in global variables, and calls validation procedure
+;		stores that data in global variables, and CALLs validation procedure
 ;		to validate that the number entered is within the range [1, 200].
 ;
 ; Preconditions: enterNumberPrompt is a string and numberInput is created to store 
@@ -105,17 +107,17 @@ introduction ENDP
 getUserData PROC
 	
 	; prompt for number
-	mov		EDX, OFFSET enterNumberPrompt
-	call	WriteString
+	MOV		EDX, OFFSET enterNumberPrompt
+	CALL	WriteString
 
 	; get number from user and store in global variable
-	call	ReadInt				
-	mov		numberInput, EAX
+	CALL	ReadInt				
+	MOV		numberInput, EAX
 
-	; check if the number is within bounds by calling validate
-	call validate
+	; check if the number is within bounds by CALLing validate
+	CALL validate
 
-	ret
+	RET
 getUserData ENDP
 
 ; ---------------------------------------------------------------------------------
@@ -123,7 +125,7 @@ getUserData ENDP
 ; 
 ; The procedure determines if the user input is within the range [1,200], if not
 ;		will display error message and send back to getUserData. If so, will
-;		will continue to return address.  
+;		will continue to RETurn address.  
 ;
 ; Preconditions: wrongNumberPrompt is a string, UPPERBOUND/LOWERBOUND are integers
 ;		and user has input numberInput.
@@ -138,23 +140,23 @@ getUserData ENDP
 validate PROC
 
 	; if number is not within range jump back to getUserData
-	cmp		numberInput, UPPERBOUND
-	ja		errorMessage					;above 200
+	CMP		numberInput, UPPERBOUND
+	JA		errorMessage					;above 200
 
-	cmp		numberInput, LOWERBOUND
-	jb		errorMessage					;below 1
+	CMP		numberInput, LOWERBOUND
+	JB		errorMessage					;below 1
 
-	ret
+	RET
 
 	; error message if out of bounds
 	errorMessage:
 
 		; prompt for number
-		mov		EDX, OFFSET wrongNumberPrompt
-		call	WriteString
-		call	Crlf
+		MOV		EDX, OFFSET wrongNumberPrompt
+		CALL	WriteString
+		CALL	Crlf
 
-		call	getUserData		; jump back to getUserData
+		CALL	getUserData		; jump back to getUserData
 
 validate ENDP
 
@@ -173,42 +175,62 @@ validate ENDP
 ; ---------------------------------------------------------------------------------
 showPrimes PROC
 
-	;establish how many times to iterate
-	mov		ECX, numberInput	; number of loops
-	mov		EAX, 0				; represents the index (N)
+	; establish how many times to iterate
+	MOV		ECX, numberInput	; number of loops
+	MOV		EAX, 0				; represents number of primes
+	MOV		EDX, 1				; represents index
 
 
 	;loop and display primes
 	displayLoop:
-		inc		EAX
+		
+		INC EDX
 
-		push	EAX
+		CMP		ECX, 1
+		JE		exitLoop
 
-		mov		EDX, 0
-		mov		EBX, 10	
-		div		EBX
+		
+		; if prime, EBX will be (1) if not (0), jump if returned (1)
+		CALL	isPrime
 
-		mov		divByTen, EDX
-		pop		EAX
+		CMP		EBX, 1
+		JNE		displayLoop
 
-		call	WriteDec
+		; push EAX on stack to preserve number so EAX can be used for DIV
+		INC		EAX
+		PUSH	EAX
 
-		cmp		divByTen, 0
-		jne		noNewLine
+		; div operation
+		MOV		EDX, 0
+		MOV		EBX, 10	
+		DIV		EBX
 
+			
+		MOV		EAX, ECX
+		; if prime counter is divisible by 10 with no quotient, print new line
+		MOV		divByTen, EDX
+		CALL	WriteDec
 
-		call	Crlf
+ 		MOV		EDX, OFFSET	numSpace
+ 		CALL	WriteString
+ 
+ 		CMP		divByTen, 0
+ 		JNE		noNewLine
+		CALL	Crlf			; new line
 
 		; jump here if not printing new line
 		noNewLine:
-
-		loop displayLoop
-
+		; get EAX back from stack
+		POP		EAX	
+		POP		EBX
 		
 
+		LOOP	displayLoop
 
+	exitLoop:
 
-	ret
+	RET
+
 showPrimes ENDP
 
 ; ---------------------------------------------------------------------------------
@@ -220,13 +242,74 @@ showPrimes ENDP
 ;
 ; Postconditions: 
 ;
-; Receives: 
+; Receives: index number of loop 
 ;
-; Returns: 
+; Returns: global variable, isPrime, holding whether number is prime via stack
 ; ---------------------------------------------------------------------------------
 isPrime PROC
 
-	ret
+	; save registers
+	PUSH	EAX
+	PUSH	ECX
+	PUSH	EDX
+
+	; Using EAX for current index as dividend
+	MOV		EAX, EDX
+
+	; start divisor at 2 and increase upward, this will find out if not prime more efficiently
+	MOV		EBX, 2
+
+	isPrimeLoop:
+		
+		; if loop counter is same as index, exit becuase prime
+		CMP		EBX, EAX
+		JE		exitLoop
+
+		PUSH	EAX		; preserve EAX as dividend
+
+		; div operation EAX(current index)/ EBX(current loop counter)
+		MOV		EDX, 0
+		DIV		EBX
+
+		; restore dividend
+		POP		EAX
+		INC		EBX
+
+		; if quotient is zero it was divisible and jump
+		CMP		EDX, 0
+		JE		primeNum
+		
+		
+	LOOP	isPrimeLoop
+
+	; exited here because is prime update EBX accordingly
+	exitLoop:
+
+		MOV		EBX, 1
+
+	
+
+	leaveProc:
+		; restore registers
+		POP	EDX
+		POP ECX
+		POP EAX
+
+	RET
+
+
+	primeNum:
+		
+		; restore registers
+		POP	EDX
+		POP ECX	
+		POP EAX
+
+		MOV		EBX, 0
+		
+	RET
+		
+
 isPrime ENDP
 
 ; ---------------------------------------------------------------------------------
@@ -244,7 +327,7 @@ isPrime ENDP
 ; ---------------------------------------------------------------------------------
 farewell PROC
 
-	ret
+	RET
 farewell ENDP
 
 

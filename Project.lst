@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/24/21 14:23:58
 8Project 4 - Prime Number Calculator     (Proj4_baxs.asm     Page 1 - 1
 
 
@@ -34,7 +34,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
 			      C 
 
 				; Integer Constants
- = 000000C8			UPPERBOUND = 200
+ = 00000FA0			UPPERBOUND = 4000
  = 00000001			LOWERBOUND = 1
 
  00000000			.data
@@ -90,20 +90,22 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
 	   65 72 2C 20 74
 	   72 79 20 61 67
 	   61 69 6E 2E 00
+
 							
 
 				; Data calculation variables
  000000E9 00000000		numberInput			SDWORD	?		  ; user number input
  000000ED 00000000		divByTen			SDWORD	?
+ 000000F1 20 00			numSpace			BYTE	" ", 0
 
 
  00000000			.code
  00000000			main PROC
 
- 00000000  E8 00000016			call introduction
- 00000005  E8 00000058			call getUserData
- 0000000A  E8 00000097			call showPrimes
- 0000000F  E8 000000C9			call farewell
+ 00000000  E8 00000016			CALL introduction
+ 00000005  E8 00000058			CALL getUserData
+ 0000000A  E8 00000097			CALL showPrimes
+ 0000000F  E8 0000011B			CALL farewell
 
 					Invoke ExitProcess,0	; exit to operating system
  00000014  6A 00	   *	    push   +000000000h
@@ -129,33 +131,33 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
  0000001B			introduction PROC
 					
 					; title, name, extra credit
- 0000001B  BA 00000000 R		mov		EDX, OFFSET programTitle
- 00000020  E8 00000000 E		call	WriteString
- 00000025  E8 00000000 E		call	Crlf
+ 0000001B  BA 00000000 R		MOV		EDX, OFFSET programTitle
+ 00000020  E8 00000000 E		CALL	WriteString
+ 00000025  E8 00000000 E		CALL	Crlf
 
- 0000002A  BA 00000030 R		mov		EDX, OFFSET extraCredit
- 0000002F  E8 00000000 E		call	WriteString
- 00000034  E8 00000000 E		call	Crlf
- 00000039  E8 00000000 E		call	Crlf
+ 0000002A  BA 00000030 R		MOV		EDX, OFFSET extraCredit
+ 0000002F  E8 00000000 E		CALL	WriteString
+ 00000034  E8 00000000 E		CALL	Crlf
+ 00000039  E8 00000000 E		CALL	Crlf
 
 					; input instructions
- 0000003E  BA 00000037 R		mov		EDX, OFFSET numberReqPrompt1 
- 00000043  E8 00000000 E		call	WriteString
- 00000048  E8 00000000 E		call	Crlf
+ 0000003E  BA 00000037 R		MOV		EDX, OFFSET numberReqPrompt1 
+ 00000043  E8 00000000 E		CALL	WriteString
+ 00000048  E8 00000000 E		CALL	Crlf
 
- 0000004D  BA 00000077 R		mov		EDX, OFFSET numberReqPrompt2	; lines 1 - 2 of instructions
- 00000052  E8 00000000 E		call	WriteString
- 00000057  E8 00000000 E		call	Crlf
- 0000005C  E8 00000000 E		call	Crlf
+ 0000004D  BA 00000077 R		MOV		EDX, OFFSET numberReqPrompt2	; lines 1 - 2 of instructions
+ 00000052  E8 00000000 E		CALL	WriteString
+ 00000057  E8 00000000 E		CALL	Crlf
+ 0000005C  E8 00000000 E		CALL	Crlf
 
- 00000061  C3				ret
+ 00000061  C3				RET
  00000062			introduction ENDP
 
 				; ---------------------------------------------------------------------------------
 				; Name: getUserData
 				; 
 				; The procedure prompts the user to enter the number of primes to be displayed,
-				;		stores that data in global variables, and calls validation procedure
+				;		stores that data in global variables, and CALLs validation procedure
 				;		to validate that the number entered is within the range [1, 200].
 				;
 				; Preconditions: enterNumberPrompt is a string and numberInput is created to store 
@@ -170,17 +172,17 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
  00000062			getUserData PROC
 					
 					; prompt for number
- 00000062  BA 000000A8 R		mov		EDX, OFFSET enterNumberPrompt
- 00000067  E8 00000000 E		call	WriteString
+ 00000062  BA 000000A8 R		MOV		EDX, OFFSET enterNumberPrompt
+ 00000067  E8 00000000 E		CALL	WriteString
 
 					; get number from user and store in global variable
- 0000006C  E8 00000000 E		call	ReadInt				
- 00000071  A3 000000E9 R		mov		numberInput, EAX
+ 0000006C  E8 00000000 E		CALL	ReadInt				
+ 00000071  A3 000000E9 R		MOV		numberInput, EAX
 
-					; check if the number is within bounds by calling validate
- 00000076  E8 00000001			call validate
+					; check if the number is within bounds by CALLing validate
+ 00000076  E8 00000001			CALL validate
 
- 0000007B  C3				ret
+ 0000007B  C3				RET
  0000007C			getUserData ENDP
 
 				; ---------------------------------------------------------------------------------
@@ -188,7 +190,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
 				; 
 				; The procedure determines if the user input is within the range [1,200], if not
 				;		will display error message and send back to getUserData. If so, will
-				;		will continue to return address.  
+				;		will continue to RETurn address.  
 				;
 				; Preconditions: wrongNumberPrompt is a string, UPPERBOUND/LOWERBOUND are integers
 				;		and user has input numberInput.
@@ -203,25 +205,25 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
  0000007C			validate PROC
 
 					; if number is not within range jump back to getUserData
- 0000007C  81 3D 000000E9 R		cmp		numberInput, UPPERBOUND
-	   000000C8
- 00000086  77 0A			ja		errorMessage					;above 200
+ 0000007C  81 3D 000000E9 R		CMP		numberInput, UPPERBOUND
+	   00000FA0
+ 00000086  77 0A			JA		errorMessage					;above 200
 
- 00000088  83 3D 000000E9 R		cmp		numberInput, LOWERBOUND
+ 00000088  83 3D 000000E9 R		CMP		numberInput, LOWERBOUND
 	   01
- 0000008F  72 01			jb		errorMessage					;below 1
+ 0000008F  72 01			JB		errorMessage					;below 1
 
- 00000091  C3				ret
+ 00000091  C3				RET
 
 					; error message if out of bounds
  00000092				errorMessage:
 
 						; prompt for number
- 00000092  BA 000000D0 R			mov		EDX, OFFSET wrongNumberPrompt
- 00000097  E8 00000000 E			call	WriteString
- 0000009C  E8 00000000 E			call	Crlf
+ 00000092  BA 000000D0 R			MOV		EDX, OFFSET wrongNumberPrompt
+ 00000097  E8 00000000 E			CALL	WriteString
+ 0000009C  E8 00000000 E			CALL	Crlf
 
- 000000A1  E8 FFFFFFBC				call	getUserData		; jump back to getUserData
+ 000000A1  E8 FFFFFFBC				CALL	getUserData		; jump back to getUserData
 
  000000A6			validate ENDP
 
@@ -240,44 +242,143 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
 				; ---------------------------------------------------------------------------------
  000000A6			showPrimes PROC
 
-					;establish how many times to iterate
- 000000A6  8B 0D 000000E9 R		mov		ECX, numberInput	; number of loops
- 000000AC  B8 00000000			mov		EAX, 0				; represents the index (N)
+					; establish how many times to iterate
+ 000000A6  8B 0D 000000E9 R		MOV		ECX, numberInput	; number of loops
+ 000000AC  B8 00000000			MOV		EAX, 0				; represents number of primes
+ 000000B1  BA 00000001			MOV		EDX, 1				; represents index
 
 
 					;loop and display primes
- 000000B1				displayLoop:
- 000000B1  40					inc		EAX
+ 000000B6				displayLoop:
+						
+ 000000B6  42					INC EDX
 
- 000000B2  50					push	EAX
-
- 000000B3  BA 00000000				mov		EDX, 0
- 000000B8  BB 0000000A				mov		EBX, 10	
- 000000BD  F7 F3				div		EBX
-
- 000000BF  89 15 000000ED R			mov		divByTen, EDX
- 000000C5  58					pop		EAX
-
- 000000C6  E8 00000000 E			call	WriteDec
-
- 000000CB  83 3D 000000ED R			cmp		divByTen, 0
-	   00
- 000000D2  75 05				jne		noNewLine
-
-
- 000000D4  E8 00000000 E			call	Crlf
-
-						; jump here if not printing new line
- 000000D9					noNewLine:
-
- 000000D9  E2 D6				loop displayLoop
+ 000000B7  83 F9 01				CMP		ECX, 1
+ 000000BA  74 41				JE		exitLoop
 
 						
+						; if prime, EBX will be (1) if not (0), jump if returned (1)
+ 000000BC  E8 0000003D				CALL	isPrime
+
+ 000000C1  83 FB 01				CMP		EBX, 1
+ 000000C4  75 F0				JNE		displayLoop
+
+						; push EAX on stack to preserve number so EAX can be used for DIV
+ 000000C6  40					INC		EAX
+ 000000C7  50					PUSH	EAX
+
+						; div operation
+ 000000C8  BA 00000000				MOV		EDX, 0
+ 000000CD  BB 0000000A				MOV		EBX, 10	
+ 000000D2  F7 F3				DIV		EBX
+
+							
+ 000000D4  8B C1				MOV		EAX, ECX
+						; if prime counter is divisible by 10 with no quotient, print new line
+ 000000D6  89 15 000000ED R			MOV		divByTen, EDX
+ 000000DC  E8 00000000 E			CALL	WriteDec
+
+ 000000E1  BA 000000F1 R	 		MOV		EDX, OFFSET	numSpace
+ 000000E6  E8 00000000 E	 		CALL	WriteString
+				 
+ 000000EB  83 3D 000000ED R	 		CMP		divByTen, 0
+	   00
+ 000000F2  75 05		 		JNE		noNewLine
+ 000000F4  E8 00000000 E			CALL	Crlf			; new line
+
+						; jump here if not printing new line
+ 000000F9					noNewLine:
+						; get EAX back from stack
+ 000000F9  58					POP		EAX	
+ 000000FA  5B					POP		EBX
+						
+
+ 000000FB  E2 B9				LOOP	displayLoop
+
+ 000000FD				exitLoop:
+
+ 000000FD  C3				RET
+
+ 000000FE			showPrimes ENDP
+
+				; ---------------------------------------------------------------------------------
+				; Name: procedureName
+				; 
+				; The description...
+				;
+				; Preconditions: 
+				;
+				; Postconditions: 
+				;
+				; Receives: index number of loop 
+				;
+				; Returns: global variable, isPrime, holding whether number is prime via stack
+				; ---------------------------------------------------------------------------------
+ 000000FE			isPrime PROC
+
+					; save registers
+ 000000FE  50				PUSH	EAX
+ 000000FF  51				PUSH	ECX
+ 00000100  52				PUSH	EDX
+
+					; Using EAX for current index as dividend
+ 00000101  8B C2			MOV		EAX, EDX
+
+					; start divisor at 2 and increase upward, this will find out if not prime more efficiently
+ 00000103  BB 00000002			MOV		EBX, 2
+
+ 00000108				isPrimeLoop:
+						
+						; if loop counter is same as index, exit becuase prime
+ 00000108  3B D8				CMP		EBX, EAX
+ 0000010A  74 11				JE		exitLoop
+
+ 0000010C  50					PUSH	EAX		; preserve EAX as dividend
+
+						; div operation EAX(current index)/ EBX(current loop counter)
+ 0000010D  BA 00000000				MOV		EDX, 0
+ 00000112  F7 F3				DIV		EBX
+
+						; restore dividend
+ 00000114  58					POP		EAX
+ 00000115  43					INC		EBX
+
+						; if quotient is zero it was divisible and jump
+ 00000116  83 FA 00				CMP		EDX, 0
+ 00000119  74 0B				JE		primeNum
+						
+						
+ 0000011B  E2 EB			LOOP	isPrimeLoop
+
+					; exited here because is prime update EBX accordingly
+ 0000011D				exitLoop:
+
+ 0000011D  BB 00000001				MOV		EBX, 1
+
+					
+
+ 00000122				leaveProc:
+						; restore registers
+ 00000122  5A					POP	EDX
+ 00000123  59					POP ECX
+ 00000124  58					POP EAX
+
+ 00000125  C3				RET
 
 
+ 00000126				primeNum:
+						
+						; restore registers
+ 00000126  5A					POP	EDX
+ 00000127  59					POP ECX	
+ 00000128  58					POP EAX
 
- 000000DB  C3				ret
- 000000DC			showPrimes ENDP
+ 00000129  BB 00000000				MOV		EBX, 0
+						
+ 0000012E  C3				RET
+						
+
+ 0000012F			isPrime ENDP
 
 				; ---------------------------------------------------------------------------------
 				; Name: procedureName
@@ -292,34 +393,16 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
 				;
 				; Returns: 
 				; ---------------------------------------------------------------------------------
- 000000DC			isPrime PROC
+ 0000012F			farewell PROC
 
- 000000DC  C3				ret
- 000000DD			isPrime ENDP
-
-				; ---------------------------------------------------------------------------------
-				; Name: procedureName
-				; 
-				; The description...
-				;
-				; Preconditions: 
-				;
-				; Postconditions: 
-				;
-				; Receives: 
-				;
-				; Returns: 
-				; ---------------------------------------------------------------------------------
- 000000DD			farewell PROC
-
- 000000DD  C3				ret
- 000000DE			farewell ENDP
+ 0000012F  C3				RET
+ 00000130			farewell ENDP
 
 
 
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/23/21 20:39:05
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/24/21 14:23:58
 8Project 4 - Prime Number Calculator     (Proj4_baxs.asm     Symbols 2 - 1
 
 
@@ -413,8 +496,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 000000F1 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000DE Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000F3 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000130 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -521,16 +604,21 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-farewell . . . . . . . . . . . .	P Near	 000000DD _TEXT	Length= 00000001 Public STDCALL
+farewell . . . . . . . . . . . .	P Near	 0000012F _TEXT	Length= 00000001 Public STDCALL
 getUserData  . . . . . . . . . .	P Near	 00000062 _TEXT	Length= 0000001A Public STDCALL
 introduction . . . . . . . . . .	P Near	 0000001B _TEXT	Length= 00000047 Public STDCALL
-isPrime  . . . . . . . . . . . .	P Near	 000000DC _TEXT	Length= 00000001 Public STDCALL
+isPrime  . . . . . . . . . . . .	P Near	 000000FE _TEXT	Length= 00000031 Public STDCALL
+  isPrimeLoop  . . . . . . . . .	L Near	 00000108 _TEXT	
+  exitLoop . . . . . . . . . . .	L Near	 0000011D _TEXT	
+  leaveProc  . . . . . . . . . .	L Near	 00000122 _TEXT	
+  primeNum . . . . . . . . . . .	L Near	 00000126 _TEXT	
 main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-showPrimes . . . . . . . . . . .	P Near	 000000A6 _TEXT	Length= 00000036 Public STDCALL
-  displayLoop  . . . . . . . . .	L Near	 000000B1 _TEXT	
-  noNewLine  . . . . . . . . . .	L Near	 000000D9 _TEXT	
+showPrimes . . . . . . . . . . .	P Near	 000000A6 _TEXT	Length= 00000058 Public STDCALL
+  displayLoop  . . . . . . . . .	L Near	 000000B6 _TEXT	
+  noNewLine  . . . . . . . . . .	L Near	 000000F9 _TEXT	
+  exitLoop . . . . . . . . . . .	L Near	 000000FD _TEXT	
 validate . . . . . . . . . . . .	P Near	 0000007C _TEXT	Length= 0000002A Public STDCALL
   errorMessage . . . . . . . . .	L Near	 00000092 _TEXT	
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -669,7 +757,7 @@ SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
 TAB  . . . . . . . . . . . . . .	Number	 00000009h   
 TRUE . . . . . . . . . . . . . .	Number	 00000001h   
 TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
-UPPERBOUND . . . . . . . . . . .	Number	 000000C8h   
+UPPERBOUND . . . . . . . . . . .	Number	 00000FA0h   
 VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
 VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
 VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
@@ -768,6 +856,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+numSpace . . . . . . . . . . . .	Byte	 000000F1 _DATA	
 numberInput  . . . . . . . . . .	DWord	 000000E9 _DATA	
 numberReqPrompt1 . . . . . . . .	Byte	 00000037 _DATA	
 numberReqPrompt2 . . . . . . . .	Byte	 00000077 _DATA	

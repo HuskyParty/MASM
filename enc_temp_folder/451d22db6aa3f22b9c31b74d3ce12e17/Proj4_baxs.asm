@@ -264,11 +264,11 @@ showPrimes ENDP
 ;
 ; Preconditions: 
 ;
-; Postconditions: EBX is changed, if index greaer than 2, EDX is changed
+; Postconditions: 
 ;
-; Receives: Index via EBX
+; Receives: index number of loop in EBX
 ;
-; Returns: Value of whether number is prime is returned in EBX. (1) yes (0) no.
+; Returns: value of whether number is prime is returned in EBX. (1) yes (0) no.
 ; ---------------------------------------------------------------------------------
 isPrime PROC
 

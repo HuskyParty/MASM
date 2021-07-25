@@ -1,7 +1,7 @@
 TITLE Project 4 - Prime Number Calculator     (Proj4_baxs.asm)
 
 ; Author: Scott Bax
-; Last Modified: 23 JuLy 2021
+; Last Modified: 25 JuLy 2021
 ; OSU email address: baxs@oregonstate.edu
 ; Course number/section:   CS271 Section 400
 ; Project Number:  Project 4    Due Date: 26 July 2021
@@ -22,17 +22,16 @@ rowPerPage = 20
 
 ; Intro variables
 programTitle		BYTE	"Scott Bax - Project 4 - Prime Number Calculator", 0
-extraCredit			BYTE	"**EC: ", 0
+extraCredit			BYTE	"**EC: Displays up to 4000 primes, shown 20 rows of primes per page", 0
 
 ; Prompt variables
 numberReqPrompt1	BYTE	"Please enter the amount of prime numbers you would like to see.", 0
-numberReqPrompt2	BYTE	"The number must be within the range of [1, 200].", 0
+numberReqPrompt2	BYTE	"The number must be within the range of [1, 4000].", 0
 enterNumberPrompt	BYTE	"Enter the number of primes to display: ", 0
 wrongNumberPrompt	BYTE	"Wrong number, try again.", 0
 numSpace			BYTE	"   ",0
 goodBye				BYTE	"Use these prime numbers wisely, See ya!",0
-
-			
+	
 
 ; Data calculation variables
 numberInput			SDWORD	?		  ; user number input
@@ -166,17 +165,17 @@ validate PROC
 validate ENDP
 
 ; ---------------------------------------------------------------------------------
-; Name: procedureName
+; Name: showPrimes
 ; 
-; The description...
+; The procedure will display the amount of primes that the user enters. Will show in rows of 20.
 ;
-; Preconditions: 
+; Preconditions: primeHolder, rowNum, rowPerPage, numSpace, numPerLine exist. numberInput have been updated to a number. 
 ;
-; Postconditions: 
+; Postconditions: EAX, EBX, ECX, EDX changed. If number of primes to display is under ten, EAX will not change.
 ;
-; Receives: 
+; Receives: Number input in global variable (numberInput). 
 ;
-; Returns: 
+; Returns: None.
 ; ---------------------------------------------------------------------------------
 showPrimes PROC
 
@@ -189,28 +188,29 @@ showPrimes PROC
 	;loop and display primes
 	displayLoop:
 		
-		PUSH	ECX
+		PUSH	ECX					
 
-		
+		; will continue to iterate upward until find prime number to display
 		reLoop:
 			
-			INC		EBX
-			PUSH	EBX
+			INC		EBX		
+			PUSH	EBX					; save register
 
-		
-			CALL	isPrime					; if prime, EBX will be (1), else (0)
+			CALL	isPrime				; if prime, EBX will be (1), else (0)
 			MOV		primeHolder, EBX		
 		
 			POP		EBX
 			CMP		primeHolder, 1
 			JNE		reLoop				; if number not prime jump back 
 
+
+		; increase number per line and row
 		INC		EAX
 		PUSH	EAX
-
 		MOV		ECX, rowNum
 
 		
+		; if there are 20 rows clear screen
 		CMP		ECX, rowPerPage
 		JE		continueAt20
 
@@ -233,15 +233,13 @@ showPrimes PROC
 			CALL	Crlf				; write new line
 			INC		ECX					; increase row count
 
+
 		; jump here if not printing new line
 		noNewLine:
-		
-		
 		
 		MOV		rowNum, ECX				; preserve row total
 		POP		ECX
 		LOOP	displayLoop
-
 
 	RET
 
@@ -260,15 +258,15 @@ showPrimes ENDP
 ; ---------------------------------------------------------------------------------
 ; Name: isPrime
 ; 
-; The procedure will take an index to check for 
+; The procedure will take an index to check if it is prime. (1) yes (0) no.
 ;
-; Preconditions: 
+; Preconditions: None
 ;
-; Postconditions: EBX is changed, if index greaer than 2, EDX is changed
+; Postconditions: EBX is changed, if index greaer than 2, EDX is changed.
 ;
 ; Receives: Index via EBX
 ;
-; Returns: Value of whether number is prime is returned in EBX. (1) yes (0) no.
+; Returns: Value of whether number is prime is returned in EBX.
 ; ---------------------------------------------------------------------------------
 isPrime PROC
 
@@ -280,11 +278,12 @@ isPrime PROC
 	; Using EAX for current index as dividend
 	MOV		EAX, EBX
 
+
 	; start divisor at 2 and increase upward, 
 	; this will find out if not prime more efficiently
 	MOV		EBX, 2
 
-
+	
 	; -------------------------
 	; Loops from 2 to index to see if any division occurs to make number not prime
 
@@ -295,16 +294,15 @@ isPrime PROC
 		CMP		EBX, EAX
 		JE		exitLoop
 
-		PUSH EAX		; save
+		PUSH	EAX		; save
 
 		; div operation EAX(current index)/ EBX(current loop counter)
 		MOV		EDX, 0
 		DIV		EBX
 
-		INC		EBX
+		INC		EBX			; increase divisor
 
-		POP EAX			; restore
-
+		POP		EAX			; restore
 
 		; if quotient is zero it was divisible and jump
 		CMP		EDX, 0
@@ -319,9 +317,10 @@ isPrime PROC
 
 		MOV		EBX, 1		; return value
 
+
 	; restore registers
-	POP ECX
-	POP EAX
+	POP		ECX
+	POP		EAX
 
 	RET
 
@@ -329,8 +328,8 @@ isPrime PROC
 	notPrimeNum:
 		
 		; restore registers
-		POP ECX
-		POP EAX
+		POP		ECX
+		POP		EAX
 
 		MOV		EBX, 0		; return value
 		

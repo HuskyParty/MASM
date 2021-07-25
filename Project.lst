@@ -1,11 +1,11 @@
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 09:17:07
 8Project 4 - Prime Number Calculator     (Proj4_baxs.asm     Page 1 - 1
 
 
 				TITLE Project 4 - Prime Number Calculator     (Proj4_baxs.asm)
 
 				; Author: Scott Bax
-				; Last Modified: 23 JuLy 2021
+				; Last Modified: 25 JuLy 2021
 				; OSU email address: baxs@oregonstate.edu
 				; Course number/section:   CS271 Section 400
 				; Project Number:  Project 4    Due Date: 26 July 2021
@@ -52,11 +52,23 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 	   72 20 43 61 6C
 	   63 75 6C 61 74
 	   6F 72 00
- 00000030 2A 2A 45 43 3A	extraCredit			BYTE	"**EC: ", 0
-	   20 00
+ 00000030 2A 2A 45 43 3A	extraCredit			BYTE	"**EC: Displays up to 4000 primes, shown 20 rows of primes per page", 0
+	   20 44 69 73 70
+	   6C 61 79 73 20
+	   75 70 20 74 6F
+	   20 34 30 30 30
+	   20 70 72 69 6D
+	   65 73 2C 20 73
+	   68 6F 77 6E 20
+	   32 30 20 72 6F
+	   77 73 20 6F 66
+	   20 70 72 69 6D
+	   65 73 20 70 65
+	   72 20 70 61 67
+	   65 00
 
 				; Prompt variables
- 00000037 50 6C 65 61 73	numberReqPrompt1	BYTE	"Please enter the amount of prime numbers you would like to see.", 0
+ 00000073 50 6C 65 61 73	numberReqPrompt1	BYTE	"Please enter the amount of prime numbers you would like to see.", 0
 	   65 20 65 6E 74
 	   65 72 20 74 68
 	   65 20 61 6D 6F
@@ -69,7 +81,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 	   20 6C 69 6B 65
 	   20 74 6F 20 73
 	   65 65 2E 00
- 00000077 54 68 65 20 6E	numberReqPrompt2	BYTE	"The number must be within the range of [1, 200].", 0
+ 000000B3 54 68 65 20 6E	numberReqPrompt2	BYTE	"The number must be within the range of [1, 4000].", 0
 	   75 6D 62 65 72
 	   20 6D 75 73 74
 	   20 62 65 20 77
@@ -77,9 +89,9 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 	   20 74 68 65 20
 	   72 61 6E 67 65
 	   20 6F 66 20 5B
-	   31 2C 20 32 30
-	   30 5D 2E 00
- 000000A8 45 6E 74 65 72	enterNumberPrompt	BYTE	"Enter the number of primes to display: ", 0
+	   31 2C 20 34 30
+	   30 30 5D 2E 00
+ 000000E5 45 6E 74 65 72	enterNumberPrompt	BYTE	"Enter the number of primes to display: ", 0
 	   20 74 68 65 20
 	   6E 75 6D 62 65
 	   72 20 6F 66 20
@@ -87,13 +99,13 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 	   73 20 74 6F 20
 	   64 69 73 70 6C
 	   61 79 3A 20 00
- 000000D0 57 72 6F 6E 67	wrongNumberPrompt	BYTE	"Wrong number, try again.", 0
+ 0000010D 57 72 6F 6E 67	wrongNumberPrompt	BYTE	"Wrong number, try again.", 0
 	   20 6E 75 6D 62
 	   65 72 2C 20 74
 	   72 79 20 61 67
 	   61 69 6E 2E 00
- 000000E9 20 20 20 00		numSpace			BYTE	"   ",0
- 000000ED 55 73 65 20 74	goodBye				BYTE	"Use these prime numbers wisely, See ya!",0
+ 00000126 20 20 20 00		numSpace			BYTE	"   ",0
+ 0000012A 55 73 65 20 74	goodBye				BYTE	"Use these prime numbers wisely, See ya!",0
 	   68 65 73 65 20
 	   70 72 69 6D 65
 	   20 6E 75 6D 62
@@ -101,14 +113,13 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 	   69 73 65 6C 79
 	   2C 20 53 65 65
 	   20 79 61 21 00
-
-							
+					
 
 				; Data calculation variables
- 00000115 00000000		numberInput			SDWORD	?		  ; user number input
- 00000119 00000000		divByTen			SDWORD	?
- 0000011D 00000000		primeHolder			SDWORD	?
- 00000121 00000000		rowNum				SDWORD	0
+ 00000152 00000000		numberInput			SDWORD	?		  ; user number input
+ 00000156 00000000		divByTen			SDWORD	?
+ 0000015A 00000000		primeHolder			SDWORD	?
+ 0000015E 00000000		rowNum				SDWORD	0
 
 
  00000000			.code
@@ -153,11 +164,11 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  00000039  E8 00000000 E		CALL	Crlf
 
 					; input instructions
- 0000003E  BA 00000037 R		MOV		EDX, OFFSET numberReqPrompt1 
+ 0000003E  BA 00000073 R		MOV		EDX, OFFSET numberReqPrompt1 
  00000043  E8 00000000 E		CALL	WriteString
  00000048  E8 00000000 E		CALL	Crlf
 
- 0000004D  BA 00000077 R		MOV		EDX, OFFSET numberReqPrompt2	; lines 1 - 2 of instructions
+ 0000004D  BA 000000B3 R		MOV		EDX, OFFSET numberReqPrompt2	; lines 1 - 2 of instructions
  00000052  E8 00000000 E		CALL	WriteString
  00000057  E8 00000000 E		CALL	Crlf
  0000005C  E8 00000000 E		CALL	Crlf
@@ -184,12 +195,12 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  00000062			getUserData PROC
 					
 					; prompt for number
- 00000062  BA 000000A8 R		MOV		EDX, OFFSET enterNumberPrompt
+ 00000062  BA 000000E5 R		MOV		EDX, OFFSET enterNumberPrompt
  00000067  E8 00000000 E		CALL	WriteString
 
 					; get number from user and store in global variable
  0000006C  E8 00000000 E		CALL	ReadInt				
- 00000071  A3 00000115 R		MOV		numberInput, EAX
+ 00000071  A3 00000152 R		MOV		numberInput, EAX
 
 					; check if the number is within bounds by CALLing validate
  00000076  E8 00000001			CALL validate
@@ -217,11 +228,11 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  0000007C			validate PROC
 
 					; if number is not within range jump back to getUserData
- 0000007C  81 3D 00000115 R		CMP		numberInput, UPPERBOUND
+ 0000007C  81 3D 00000152 R		CMP		numberInput, UPPERBOUND
 	   00000FA0
  00000086  77 0A			JA		errorMessage					;above 200
 
- 00000088  83 3D 00000115 R		CMP		numberInput, LOWERBOUND
+ 00000088  83 3D 00000152 R		CMP		numberInput, LOWERBOUND
 	   01
  0000008F  72 01			JB		errorMessage					;below 1
 
@@ -231,7 +242,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  00000092				errorMessage:
 
 						; prompt for number
- 00000092  BA 000000D0 R			MOV		EDX, OFFSET wrongNumberPrompt
+ 00000092  BA 0000010D R			MOV		EDX, OFFSET wrongNumberPrompt
  00000097  E8 00000000 E			CALL	WriteString
  0000009C  E8 00000000 E			CALL	Crlf
 
@@ -240,22 +251,22 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  000000A6			validate ENDP
 
 				; ---------------------------------------------------------------------------------
-				; Name: procedureName
+				; Name: showPrimes
 				; 
-				; The description...
+				; The procedure will display the amount of primes that the user enters. Will show in rows of 20.
 				;
-				; Preconditions: 
+				; Preconditions: primeHolder, rowNum, rowPerPage, numSpace, numPerLine exist. numberInput have been updated to a number. 
 				;
-				; Postconditions: 
+				; Postconditions: EAX, EBX, ECX, EDX changed. If number of primes to display is under ten, EAX will not change.
 				;
-				; Receives: 
+				; Receives: Number input in global variable (numberInput). 
 				;
-				; Returns: 
+				; Returns: None.
 				; ---------------------------------------------------------------------------------
  000000A6			showPrimes PROC
 
 					; establish how many times to iterate
- 000000A6  8B 0D 00000115 R		MOV		ECX, numberInput			; number of loops
+ 000000A6  8B 0D 00000152 R		MOV		ECX, numberInput			; number of loops
  000000AC  B8 00000000			MOV		EAX, 0						; represents number of primes
  000000B1  BB 00000001			MOV		EBX, 1						; represents index
 
@@ -263,29 +274,30 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 					;loop and display primes
  000000B6				displayLoop:
 						
- 000000B6  51					PUSH	ECX
+ 000000B6  51					PUSH	ECX					
 
-						
+						; will continue to iterate upward until find prime number to display
  000000B7					reLoop:
 							
- 000000B7  43						INC		EBX
- 000000B8  53						PUSH	EBX
+ 000000B7  43						INC		EBX		
+ 000000B8  53						PUSH	EBX					; save register
 
-						
- 000000B9  E8 0000005A					CALL	isPrime					; if prime, EBX will be (1), else (0)
- 000000BE  89 1D 0000011D R				MOV		primeHolder, EBX		
+ 000000B9  E8 0000005A					CALL	isPrime				; if prime, EBX will be (1), else (0)
+ 000000BE  89 1D 0000015A R				MOV		primeHolder, EBX		
 						
  000000C4  5B						POP		EBX
- 000000C5  83 3D 0000011D R				CMP		primeHolder, 1
+ 000000C5  83 3D 0000015A R				CMP		primeHolder, 1
 	   01
  000000CC  75 E9					JNE		reLoop				; if number not prime jump back 
 
+
+						; increase number per line and row
  000000CE  40					INC		EAX
  000000CF  50					PUSH	EAX
-
- 000000D0  8B 0D 00000121 R			MOV		ECX, rowNum
+ 000000D0  8B 0D 0000015E R			MOV		ECX, rowNum
 
 						
+						; if there are 20 rows clear screen
  000000D6  83 F9 14				CMP		ECX, rowPerPage
  000000D9  74 2C				JE		continueAt20
 
@@ -298,7 +310,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  000000DB  8B C3					MOV		EAX, EBX
  000000DD  E8 00000000 E				CALL	WriteDec			; write prime number
 
- 000000E2  BA 000000E9 R	 			MOV		EDX, OFFSET	numSpace
+ 000000E2  BA 00000126 R	 			MOV		EDX, OFFSET	numSpace
  000000E7  E8 00000000 E	 			CALL	WriteString			; write " "
 				 
  000000EC  58						POP		EAX
@@ -308,15 +320,13 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  000000F7  E8 00000000 E				CALL	Crlf				; write new line
  000000FC  41						INC		ECX					; increase row count
 
+
 						; jump here if not printing new line
  000000FD					noNewLine:
 						
-						
-						
- 000000FD  89 0D 00000121 R			MOV		rowNum, ECX				; preserve row total
+ 000000FD  89 0D 0000015E R			MOV		rowNum, ECX				; preserve row total
  00000103  59					POP		ECX
  00000104  E2 B0				LOOP	displayLoop
-
 
  00000106  C3				RET
 
@@ -335,15 +345,15 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 				; ---------------------------------------------------------------------------------
 				; Name: isPrime
 				; 
-				; The procedure will take an index to check for 
+				; The procedure will take an index to check if it is prime. (1) yes (0) no.
 				;
-				; Preconditions: 
+				; Preconditions: None
 				;
-				; Postconditions: 
+				; Postconditions: EBX is changed, if index greaer than 2, EDX is changed.
 				;
-				; Receives: index number of loop in EBX
+				; Receives: Index via EBX
 				;
-				; Returns: value of whether number is prime is returned in EBX. (1) yes (0) no.
+				; Returns: Value of whether number is prime is returned in EBX.
 				; ---------------------------------------------------------------------------------
  00000118			isPrime PROC
 
@@ -355,11 +365,12 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 					; Using EAX for current index as dividend
  0000011A  8B C3			MOV		EAX, EBX
 
+
 					; start divisor at 2 and increase upward, 
 					; this will find out if not prime more efficiently
  0000011C  BB 00000002			MOV		EBX, 2
 
-
+					
 					; -------------------------
 					; Loops from 2 to index to see if any division occurs to make number not prime
 
@@ -370,16 +381,15 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  00000121  3B D8				CMP		EBX, EAX
  00000123  74 12				JE		exitLoop
 
- 00000125  50					PUSH EAX		; save
+ 00000125  50					PUSH	EAX		; save
 
 						; div operation EAX(current index)/ EBX(current loop counter)
  00000126  BA 00000000				MOV		EDX, 0
  0000012B  F7 F3				DIV		EBX
 
- 0000012D  43					INC		EBX
+ 0000012D  43					INC		EBX			; increase divisor
 
- 0000012E  58					POP EAX			; restore
-
+ 0000012E  58					POP		EAX			; restore
 
 						; if quotient is zero it was divisible and jump
  0000012F  83 FA 00				CMP		EDX, 0
@@ -394,9 +404,10 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 
  00000137  BB 00000001				MOV		EBX, 1		; return value
 
+
 					; restore registers
- 0000013C  59				POP ECX
- 0000013D  58				POP EAX
+ 0000013C  59				POP		ECX
+ 0000013D  58				POP		EAX
 
  0000013E  C3				RET
 
@@ -404,8 +415,8 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  0000013F				notPrimeNum:
 						
 						; restore registers
- 0000013F  59					POP ECX
- 00000140  58					POP EAX
+ 0000013F  59					POP		ECX
+ 00000140  58					POP		EAX
 
  00000141  BB 00000000				MOV		EBX, 0		; return value
 						
@@ -433,7 +444,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
  00000147  E8 00000000 E		call	Crlf
  0000014C  E8 00000000 E		call	Crlf
 
- 00000151  BA 000000ED R		mov		EDX, OFFSET goodBye			; message
+ 00000151  BA 0000012A R		mov		EDX, OFFSET goodBye			; message
  00000156  E8 00000000 E		call	WriteString
 
  0000015B  C3				RET
@@ -443,7 +454,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
 
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 08:45:04
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    07/25/21 09:17:07
 8Project 4 - Prime Number Calculator     (Proj4_baxs.asm     Symbols 2 - 1
 
 
@@ -537,7 +548,7 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000125 Para	  Public  'DATA'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000162 Para	  Public  'DATA'	
 _TEXT  . . . . . . . . . . . . .	32 Bit	 0000015C Para	  Public  'CODE'	
 
 
@@ -885,11 +896,11 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-divByTen . . . . . . . . . . . .	DWord	 00000119 _DATA	
-enterNumberPrompt  . . . . . . .	Byte	 000000A8 _DATA	
+divByTen . . . . . . . . . . . .	DWord	 00000156 _DATA	
+enterNumberPrompt  . . . . . . .	Byte	 000000E5 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 extraCredit  . . . . . . . . . .	Byte	 00000030 _DATA	
-goodBye  . . . . . . . . . . . .	Byte	 000000ED _DATA	
+goodBye  . . . . . . . . . . . .	Byte	 0000012A _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
@@ -900,17 +911,17 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 numPerLine . . . . . . . . . . .	Number	 0000000Ah   
-numSpace . . . . . . . . . . . .	Byte	 000000E9 _DATA	
-numberInput  . . . . . . . . . .	DWord	 00000115 _DATA	
-numberReqPrompt1 . . . . . . . .	Byte	 00000037 _DATA	
-numberReqPrompt2 . . . . . . . .	Byte	 00000077 _DATA	
-primeHolder  . . . . . . . . . .	DWord	 0000011D _DATA	
+numSpace . . . . . . . . . . . .	Byte	 00000126 _DATA	
+numberInput  . . . . . . . . . .	DWord	 00000152 _DATA	
+numberReqPrompt1 . . . . . . . .	Byte	 00000073 _DATA	
+numberReqPrompt2 . . . . . . . .	Byte	 000000B3 _DATA	
+primeHolder  . . . . . . . . . .	DWord	 0000015A _DATA	
 programTitle . . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-rowNum . . . . . . . . . . . . .	DWord	 00000121 _DATA	
+rowNum . . . . . . . . . . . . .	DWord	 0000015E _DATA	
 rowPerPage . . . . . . . . . . .	Number	 00000014h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
-wrongNumberPrompt  . . . . . . .	Byte	 000000D0 _DATA	
+wrongNumberPrompt  . . . . . . .	Byte	 0000010D _DATA	
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 

@@ -196,6 +196,7 @@ sortList PROC
 	PUSH		ECX
 	PUSH		EDI
 
+	backToSortLoop:
 	; set loop & EDI for loop reference
 	MOV			ECX, [EBP + 8]
 	SUB			ECX, 1					; due to exchangeg call procedure, 
@@ -233,12 +234,8 @@ sortList PROC
 		ADD		EDI, 4				;increment to next index
 		LOOP	sortLoop
 	
-	; reset counter in case of back to sort loop
-	MOV			ECX, [EBP + 8]
-	SUB			ECX, 1
-	MOV			EBX, 0
 	CMP			EBX, 0
-	JNE			sortLoop
+	JNE			backToSortLoop
 
 
 	; restore registers

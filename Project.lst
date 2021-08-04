@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 15:54:50
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 16:04:01
 <Project 5 - Genorating, Sorting, Counting Random Ints     (  Page 1 - 1
 
 
@@ -154,7 +154,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 15:54:50
  00000022  68 000004AA R		PUSH		OFFSET space
  00000027  68 0000018A R		PUSH		OFFSET randArray
  0000002C  68 000000C8			PUSH		ARRAYSIZE
- 00000031  E8 000000F3			CALL		displayList
+ 00000031  E8 000000E8			CALL		displayList
 
 				;	; Sort array
  00000036  68 0000018A R		PUSH		OFFSET randArray
@@ -165,7 +165,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 15:54:50
  00000045  68 000004AA R		PUSH		OFFSET space
  0000004A  68 0000018A R		PUSH		OFFSET randArray
  0000004F  68 000000C8			PUSH		ARRAYSIZE
- 00000054  E8 000000D0			CALL		displayList
+ 00000054  E8 000000C5			CALL		displayList
 
 
 
@@ -298,6 +298,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 15:54:50
  000000C0  51				PUSH		ECX
  000000C1  57				PUSH		EDI
 
+ 000000C2				backToSortLoop:
 					; set loop & EDI for loop reference
  000000C2  8B 4D 08			MOV			ECX, [EBP + 8]
  000000C5  83 E9 01			SUB			ECX, 1					; due to exchangeg call procedure, 
@@ -328,32 +329,28 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 15:54:50
  000000E3  57					PUSH		EDI
  000000E4  83 C7 04				ADD			EDI, 4
  000000E7  57					PUSH		EDI
- 000000E8  E8 0000001D				CALL		exchangeElements  
+ 000000E8  E8 00000012				CALL		exchangeElements  
 
  000000ED					noExchangeNeeded:
 
  000000ED  83 C7 04				ADD		EDI, 4				;increment to next index
  000000F0  E2 DE				LOOP	sortLoop
 					
-					; reset counter in case of back to sort loop
- 000000F2  8B 4D 08			MOV			ECX, [EBP + 8]
- 000000F5  83 E9 01			SUB			ECX, 1
- 000000F8  BB 00000000			MOV			EBX, 0
- 000000FD  83 FB 00			CMP			EBX, 0
- 00000100  75 CE			JNE			sortLoop
+ 000000F2  83 FB 00			CMP			EBX, 0
+ 000000F5  75 CB			JNE			backToSortLoop
 
 
 					; restore registers
- 00000102  5F				POP			EDI
- 00000103  59				POP			ECX
- 00000104  5B				POP			EBX
- 00000105  58				POP			EAX
+ 000000F7  5F				POP			EDI
+ 000000F8  59				POP			ECX
+ 000000F9  5B				POP			EBX
+ 000000FA  58				POP			EAX
 
 					; restore EBP register
- 00000106  5D				POP			EBP
+ 000000FB  5D				POP			EBP
 
- 00000107  C2 0008			RET 8
- 0000010A			sortList ENDP
+ 000000FC  C2 0008			RET 8
+ 000000FF			sortList ENDP
 
 				; ---------------------------------------------------------------------------------
 				; Name: exchangeElements  
@@ -368,42 +365,42 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 15:54:50
 				;
 				; Returns: someArray updated with random integers within specified range
 				; ---------------------------------------------------------------------------------
- 0000010A			exchangeElements PROC
+ 000000FF			exchangeElements PROC
 					
 					; preserve EBP register and set it up as stack pointer
- 0000010A  55				PUSH		EBP
- 0000010B  8B EC			MOV			EBP, ESP
+ 000000FF  55				PUSH		EBP
+ 00000100  8B EC			MOV			EBP, ESP
 
 					; preserver registers
 
- 0000010D  53				PUSH		EBX
- 0000010E  51				PUSH		ECX
+ 00000102  53				PUSH		EBX
+ 00000103  51				PUSH		ECX
 
 
 					; set registers with first and second index
- 0000010F  8B 7D 08			MOV			EDI, [EBP + 8]		; second index
- 00000112  8B 0F			MOV			ECX, [EDI]
+ 00000104  8B 7D 08			MOV			EDI, [EBP + 8]		; second index
+ 00000107  8B 0F			MOV			ECX, [EDI]
 
- 00000114  8B 7D 0C			MOV			EDI, [EBP + 12]		; first index
- 00000117  8B 1F			MOV			EBX, [EDI]
+ 00000109  8B 7D 0C			MOV			EDI, [EBP + 12]		; first index
+ 0000010C  8B 1F			MOV			EBX, [EDI]
 
- 00000119  8B 7D 08			MOV			EDI, [EBP + 8]	
- 0000011C  89 1F			MOV			[EDI], EBX
+ 0000010E  8B 7D 08			MOV			EDI, [EBP + 8]	
+ 00000111  89 1F			MOV			[EDI], EBX
 
- 0000011E  8B 7D 0C			MOV			EDI, [EBP + 12]	
- 00000121  89 0F			MOV			[EDI], ECX
+ 00000113  8B 7D 0C			MOV			EDI, [EBP + 12]	
+ 00000116  89 0F			MOV			[EDI], ECX
 
 
 					; restore registers
- 00000123  59				POP			ECX
- 00000124  5B				POP			EBX
+ 00000118  59				POP			ECX
+ 00000119  5B				POP			EBX
 
 
 					; restore EBP register
- 00000125  5D				POP			EBP
+ 0000011A  5D				POP			EBP
 
- 00000126  C2 0008			RET 8
- 00000129			exchangeElements ENDP
+ 0000011B  C2 0008			RET 8
+ 0000011E			exchangeElements ENDP
 
 				; ---------------------------------------------------------------------------------
 				; Name: displayList
@@ -418,66 +415,66 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 15:54:50
 				;
 				; Returns: someArray updated with random integers within specified range
 				; ---------------------------------------------------------------------------------
- 00000129			displayList PROC
+ 0000011E			displayList PROC
 					
 					; preserve EBP register and set it up as stack pointer
- 00000129  55				PUSH		EBP
- 0000012A  8B EC			MOV			EBP, ESP
+ 0000011E  55				PUSH		EBP
+ 0000011F  8B EC			MOV			EBP, ESP
 
 					; preserver registers
- 0000012C  50				PUSH		EAX
- 0000012D  53				PUSH		EBX
- 0000012E  51				PUSH		ECX
- 0000012F  57				PUSH		EDI
+ 00000121  50				PUSH		EAX
+ 00000122  53				PUSH		EBX
+ 00000123  51				PUSH		ECX
+ 00000124  57				PUSH		EDI
 
 					; set loop & EDI for loop reference
- 00000130  8B 4D 08			MOV			ECX, [EBP + 8]
- 00000133  8B 7D 0C			MOV			EDI, [EBP + 12]
+ 00000125  8B 4D 08			MOV			ECX, [EBP + 8]
+ 00000128  8B 7D 0C			MOV			EDI, [EBP + 12]
 					
 					; used to track numbers per line
- 00000136  BB 00000000			MOV			EBX, 0 
+ 0000012B  BB 00000000			MOV			EBX, 0 
 					; loop to display array
 
- 0000013B				displayLoop:
+ 00000130				displayLoop:
 						
 						; pass array item into WriteDec
- 0000013B  8B 07				MOV		EAX, [EDI]
- 0000013D  83 FB 14				CMP		EBX, 20
+ 00000130  8B 07				MOV		EAX, [EDI]
+ 00000132  83 FB 14				CMP		EBX, 20
 
- 00000140  75 0A				JNE		skipLineReset		; if there are 20 numbers make new line
- 00000142  BB 00000000				MOV		EBX, 0 
- 00000147  E8 00000000 E			CALL	Crlf	
+ 00000135  75 0A				JNE		skipLineReset		; if there are 20 numbers make new line
+ 00000137  BB 00000000				MOV		EBX, 0 
+ 0000013C  E8 00000000 E			CALL	Crlf	
 
- 0000014C					skipLineReset:
- 0000014C  E8 00000000 E			CALL	WriteDec			; display number
+ 00000141					skipLineReset:
+ 00000141  E8 00000000 E			CALL	WriteDec			; display number
 
- 00000151  8B 55 10				MOV		EDX, [EBP + 16]
- 00000154  E8 00000000 E			CALL	WriteString			; display space
+ 00000146  8B 55 10				MOV		EDX, [EBP + 16]
+ 00000149  E8 00000000 E			CALL	WriteString			; display space
 
 
- 00000159  83 C7 04				ADD		EDI, 4				;increment to next index
- 0000015C  83 C3 01				ADD		EBX, 1
- 0000015F  E2 DA				LOOP	displayLoop
+ 0000014E  83 C7 04				ADD		EDI, 4				;increment to next index
+ 00000151  83 C3 01				ADD		EBX, 1
+ 00000154  E2 DA				LOOP	displayLoop
 
 
 					; New line
- 00000161  E8 00000000 E		CALL	Crlf
- 00000166  E8 00000000 E		CALL	Crlf
+ 00000156  E8 00000000 E		CALL	Crlf
+ 0000015B  E8 00000000 E		CALL	Crlf
 					
 					; restore registers
- 0000016B  5F				POP			EDI
- 0000016C  59				POP			ECX
- 0000016D  5B				POP			EBX
- 0000016E  58				POP			EAX
+ 00000160  5F				POP			EDI
+ 00000161  59				POP			ECX
+ 00000162  5B				POP			EBX
+ 00000163  58				POP			EAX
 
 					; restore EBP register
- 0000016F  5D				POP			EBP
+ 00000164  5D				POP			EBP
 
- 00000170  C2 000C			RET 12
- 00000173			displayList ENDP
+ 00000165  C2 000C			RET 12
+ 00000168			displayList ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 15:54:50
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 16:04:01
 <Project 5 - Genorating, Sorting, Counting Random Ints     (  Symbols 2 - 1
 
 
@@ -572,7 +569,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 000004B2 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000173 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000168 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -679,17 +676,18 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-displayList  . . . . . . . . . .	P Near	 00000129 _TEXT	Length= 0000004A Public STDCALL
-  displayLoop  . . . . . . . . .	L Near	 0000013B _TEXT	
-  skipLineReset  . . . . . . . .	L Near	 0000014C _TEXT	
-exchangeElements . . . . . . . .	P Near	 0000010A _TEXT	Length= 0000001F Public STDCALL
+displayList  . . . . . . . . . .	P Near	 0000011E _TEXT	Length= 0000004A Public STDCALL
+  displayLoop  . . . . . . . . .	L Near	 00000130 _TEXT	
+  skipLineReset  . . . . . . . .	L Near	 00000141 _TEXT	
+exchangeElements . . . . . . . .	P Near	 000000FF _TEXT	Length= 0000001F Public STDCALL
 fillArray  . . . . . . . . . . .	P Near	 0000008B _TEXT	Length= 00000030 Public STDCALL
   fillLoop . . . . . . . . . . .	L Near	 0000009C _TEXT	
 introduction . . . . . . . . . .	P Near	 00000060 _TEXT	Length= 0000002B Public STDCALL
 main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000060 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-sortList . . . . . . . . . . . .	P Near	 000000BB _TEXT	Length= 0000004F Public STDCALL
+sortList . . . . . . . . . . . .	P Near	 000000BB _TEXT	Length= 00000044 Public STDCALL
+  backToSortLoop . . . . . . . .	L Near	 000000C2 _TEXT	
   sortLoop . . . . . . . . . . .	L Near	 000000D0 _TEXT	
   noExchangeNeeded . . . . . . .	L Near	 000000ED _TEXT	
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C

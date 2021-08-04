@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 09:54:05
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 12:40:38
 <Project 5 - Genorating, Sorting, Counting Random Ints     (  Page 1 - 1
 
 
@@ -41,7 +41,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 09:54:05
  00000000			.data
 
 				; Intro variables
- 00000000 53 63 6F 74 74	intro1		 		BYTE	"Scott Bax - Project 5 - Random Integer Array Generator/Manipulator", 0
+ 00000000 53 63 6F 74 74	nameAndTitle	BYTE	"Scott Bax - Project 5 - Random Integer Array Generator/Manipulator", 0
 	   20 42 61 78 20
 	   2D 20 50 72 6F
 	   6A 65 63 74 20
@@ -55,7 +55,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 09:54:05
 	   4D 61 6E 69 70
 	   75 6C 61 74 6F
 	   72 00
- 00000043 54 68 69 73 20	intro2				BYTE	"This program generates an array with 200 random integers between 10-29", 10, 13
+ 00000043 54 68 69 73 20	description		BYTE	"This program generates an array with 200 random integers between 10-29", 10, 13
 	   70 72 6F 67 72
 	   61 6D 20 67 65
 	   6E 65 72 61 74
@@ -70,7 +70,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 09:54:05
 	   77 65 65 6E 20
 	   31 30 2D 32 39
 	   0A 0D
- 0000008B  61 6E 64 20 64						BYTE	"and displays the list first unsorted. It then /calculates/displays the median value", 10, 13
+ 0000008B  61 6E 64 20 64					BYTE	"and displays the list first unsorted. It then /calculates/displays the median value", 10, 13
 	   69 73 70 6C 61
 	   79 73 20 74 68
 	   65 20 6C 69 73
@@ -87,7 +87,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 09:54:05
 	   20 6D 65 64 69
 	   61 6E 20 76 61
 	   6C 75 65 0A 0D
- 000000E0  6F 66 20 74 68						BYTE	"of the array. It then sorts/displays array in ascending order. It then generates/", 10, 13
+ 000000E0  6F 66 20 74 68					BYTE	"of the array. It then sorts/displays array in ascending order. It then generates/", 10, 13
 	   65 20 61 72 72
 	   61 79 2E 20 49
 	   74 20 74 68 65
@@ -104,7 +104,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 09:54:05
 	   20 67 65 6E 65
 	   72 61 74 65 73
 	   2F 0A 0D
- 00000133  64 69 73 70 6C						BYTE	"displays another array holding the number of times each random number was displayed.", 10, 13, 0
+ 00000133  64 69 73 70 6C					BYTE	"displays another array holding the number of times each random number was displayed.", 10, 13, 0
 	   61 79 73 20 61
 	   6E 6F 74 68 65
 	   72 20 61 72 72
@@ -124,81 +124,187 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 09:54:05
 	   0D 00
 
 
-				; Prompt variables
- 0000018A 50 6C 65 61 73	numberReqPrompt1	BYTE	"Please enter the amount of prime numbers you would like to see.", 0
-	   65 20 65 6E 74
-	   65 72 20 74 68
-	   65 20 61 6D 6F
-	   75 6E 74 20 6F
-	   66 20 70 72 69
-	   6D 65 20 6E 75
-	   6D 62 65 72 73
-	   20 79 6F 75 20
-	   77 6F 75 6C 64
-	   20 6C 69 6B 65
-	   20 74 6F 20 73
-	   65 65 2E 00
- 000001CA 54 68 65 20 6E	numberReqPrompt2	BYTE	"The number must be within the range of [1, 4000].", 0
-	   75 6D 62 65 72
-	   20 6D 75 73 74
-	   20 62 65 20 77
-	   69 74 68 69 6E
-	   20 74 68 65 20
-	   72 61 6E 67 65
-	   20 6F 66 20 5B
-	   31 2C 20 34 30
-	   30 30 5D 2E 00
+				; Array variables	
+ 0000018A  000000C8 [		randArray		DWORD   ARRAYSIZE DUP(?)
+	    00000000
+	   ]
 
 
  00000000			.code
  00000000			main PROC
- 00000000  68 00000000 R		PUSH			OFFSET intro1 
- 00000005  68 00000043 R		PUSH			OFFSET intro2
- 0000000A  E8 00000007			CALL			introduction
+
+					; Intro
+ 00000000  68 00000000 R		PUSH		OFFSET nameAndTitle 
+ 00000005  68 00000043 R		PUSH		OFFSET description
+ 0000000A  E8 00000029			CALL		introduction
+
+					; Fill array
+ 0000000F  68 0000018A R		PUSH		OFFSET randArray
+ 00000014  6A 0A			PUSH		LO
+ 00000016  6A 1D			PUSH		HI
+ 00000018  68 000000C8			PUSH		ARRAYSIZE
+ 0000001D  E8 00000041			CALL		fillArray
+
+					; Display array
+ 00000022  68 0000018A R		PUSH		OFFSET randArray
+ 00000027  68 000000C8			PUSH		ARRAYSIZE
+ 0000002C  E8 0000005D			CALL		displayList
+
+
 
 					Invoke ExitProcess,0	; exit to operating system
- 0000000F  6A 00	   *	    push   +000000000h
- 00000011  E8 00000000 E   *	    call   ExitProcess
- 00000016			main ENDP
+ 00000031  6A 00	   *	    push   +000000000h
+ 00000033  E8 00000000 E   *	    call   ExitProcess
+
+ 00000038			main ENDP
 
 				; ---------------------------------------------------------------------------------
 				; Name: Introduction
 				; 
-				; The procedure...
+				; The procedure displays programmer name and program description to user. 
 				;
-				; Preconditions:
+				; Preconditions: intro1 and intro2 exist as strings.
 				;
-				; Postconditions:
+				; Postconditions: EDX changed.
 				;
-				; Receives:
+				; Receives:	intro1 and intro2 by reference via the stack (in that order). 
 				;
-				; Returns: 
+				; Returns: None.
 				; ---------------------------------------------------------------------------------
- 00000016			introduction PROC
+ 00000038			introduction PROC
 					
 					; preserve EBP register and set it up as stack pointer
- 00000016  55				PUSH			EBP
- 00000017  8B EC			MOV				EBP, ESP
+ 00000038  55				PUSH		EBP
+ 00000039  8B EC			MOV			EBP, ESP
 					
-					; title, name, extra credit
- 00000019  8B 55 0C			MOV				EDX, [EBP + 12]
- 0000001C  E8 00000000 E		CALL			WriteString
- 00000021  E8 00000000 E		CALL			Crlf
- 00000026  E8 00000000 E		CALL			Crlf
+					; title, name and description of program
+ 0000003B  8B 55 0C			MOV			EDX, [EBP + 12]
+ 0000003E  E8 00000000 E		CALL		WriteString
+ 00000043  E8 00000000 E		CALL		Crlf
+ 00000048  E8 00000000 E		CALL		Crlf
 
- 0000002B  8B 55 08			MOV				EDX, [EBP + 8]
- 0000002E  E8 00000000 E		CALL			WriteString
- 00000033  E8 00000000 E		CALL			Crlf
- 00000038  E8 00000000 E		CALL			Crlf
+ 0000004D  8B 55 08			MOV			EDX, [EBP + 8]
+ 00000050  E8 00000000 E		CALL		WriteString
+ 00000055  E8 00000000 E		CALL		Crlf
+ 0000005A  E8 00000000 E		CALL		Crlf
 
 					; restore EBP register
- 0000003D  5D				POP			EBP
+ 0000005F  5D				POP			EBP
 
- 0000003E  C2 0008			RET 8
- 00000041			introduction ENDP
+ 00000060  C2 0008			RET 8
+ 00000063			introduction ENDP
+
+				; ---------------------------------------------------------------------------------
+				; Name: fillArray
+				; 
+				; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+				;
+				; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+				;
+				; Postconditions: someArray is updated with new random values
+				;
+				; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value
+				;
+				; Returns: someArray updated with random integers within specified range
+				; ---------------------------------------------------------------------------------
+ 00000063			fillArray PROC
+					
+					; preserve EBP register and set it up as stack pointer
+ 00000063  55				PUSH		EBP
+ 00000064  8B EC			MOV			EBP, ESP
+
+					; preserver registers
+ 00000066  50				PUSH		EAX
+ 00000067  51				PUSH		ECX
+ 00000068  57				PUSH		EDI
+
+					; set loop & EDI for loop reference
+ 00000069  8B 4D 08			MOV			ECX, [EBP + 8]
+ 0000006C  8B 7D 14			MOV			EDI, [EBP + 20]
+					; loop to fill array
+ 0000006F				fillLoop:
+						
+						; Generate random number by using HI & LO
+						; Since RandomRange Initializes at zero mus subtract LO from HI
+						; then generate number and add LO back to HI
+ 0000006F  8B 45 0C				MOV		EAX, [EBP + 12]
+ 00000072  2B 45 10				SUB		EAX, [EBP + 16]
+ 00000075  83 C0 01				ADD		EAX, 1				; RandomRange upper limit exclusive
+
+ 00000078  E8 00000000 E			CALL	RandomRange
+ 0000007D  03 45 10				ADD		EAX, [EBP + 16]		; add back Lo
+
+
+ 00000080  89 07				MOV		[EDI], EAX
+ 00000082  83 C7 04				ADD		EDI, 4				; put random val in array and increment to next index
+
+ 00000085  E2 E8				LOOP	fillLoop
+
+
+					; restore registers
+ 00000087  5F				POP			EDI
+ 00000088  59				POP			ECX
+ 00000089  58				POP			EAX
+
+					; restore EBP register
+ 0000008A  5D				POP			EBP
+
+ 0000008B  C2 0014			RET 20
+ 0000008E			fillArray ENDP
+
+				; ---------------------------------------------------------------------------------
+				; Name: displayList
+				; 
+				; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+				;
+				; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+				;
+				; Postconditions: someArray is updated with new random values
+				;
+				; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value
+				;
+				; Returns: someArray updated with random integers within specified range
+				; ---------------------------------------------------------------------------------
+ 0000008E			displayList PROC
+					
+					; preserve EBP register and set it up as stack pointer
+ 0000008E  55				PUSH		EBP
+ 0000008F  8B EC			MOV			EBP, ESP
+
+					; preserver registers
+ 00000091  50				PUSH		EAX
+ 00000092  51				PUSH		ECX
+ 00000093  57				PUSH		EDI
+
+					; set loop & EDI for loop reference
+ 00000094  8B 4D 08			MOV			ECX, [EBP + 8]
+ 00000097  8B 7D 0C			MOV			EDI, [EBP + 12]
+					
+					; loop to display array
+ 0000009A				displayLoop:
+						
+						; pass array item into WriteDec
+ 0000009A  8B 07				MOV		EAX, [EDI]
+ 0000009C  E8 00000000 E			CALL	WriteDec
+
+ 000000A1  83 C7 04				ADD		EDI, 4				;increment to next index
+
+ 000000A4  E2 F4				LOOP	displayLoop
+
+
+					; restore registers
+ 000000A6  5F				POP			EDI
+ 000000A7  59				POP			ECX
+ 000000A8  58				POP			EAX
+
+					; restore EBP register
+ 000000A9  5D				POP			EBP
+
+ 000000AA  C2 000C			RET 12
+ 000000AD			displayList ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 09:54:05
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/04/21 12:40:38
 <Project 5 - Genorating, Sorting, Counting Random Ints     (  Symbols 2 - 1
 
 
@@ -292,8 +398,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 000001FC Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000041 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000004AA Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000AD Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -400,8 +506,12 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-introduction . . . . . . . . . .	P Near	 00000016 _TEXT	Length= 0000002B Public STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000016 Public STDCALL
+displayList  . . . . . . . . . .	P Near	 0000008E _TEXT	Length= 0000001F Public STDCALL
+  displayLoop  . . . . . . . . .	L Near	 0000009A _TEXT	
+fillArray  . . . . . . . . . . .	P Near	 00000063 _TEXT	Length= 0000002B Public STDCALL
+  fillLoop . . . . . . . . . . .	L Near	 0000006F _TEXT	
+introduction . . . . . . . . . .	P Near	 00000038 _TEXT	Length= 0000002B Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000038 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -627,11 +737,10 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
+description  . . . . . . . . . .	Byte	 00000043 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-intro1 . . . . . . . . . . . . .	Byte	 00000000 _DATA	
-intro2 . . . . . . . . . . . . .	Byte	 00000043 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -639,8 +748,8 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-numberReqPrompt1 . . . . . . . .	Byte	 0000018A _DATA	
-numberReqPrompt2 . . . . . . . .	Byte	 000001CA _DATA	
+nameAndTitle . . . . . . . . . .	Byte	 00000000 _DATA	
+randArray  . . . . . . . . . . .	DWord	 0000018A _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA

@@ -30,6 +30,10 @@ description		BYTE	"This program generates an array with 200 random integers betw
 ; Array variables	
 randArray		DWORD   ARRAYSIZE DUP(?)
 
+; Display variables	
+space			DWORD   " ", 0
+
+
 
 .code
 main PROC
@@ -47,6 +51,18 @@ main PROC
 	CALL		fillArray
 
 	; Display array
+	PUSH		OFFSET space
+	PUSH		OFFSET randArray
+	PUSH		ARRAYSIZE
+	CALL		displayList
+
+;	; Sort array
+	PUSH		OFFSET randArray
+	PUSH		ARRAYSIZE
+	CALL		sortList
+
+	; Display array
+	PUSH		OFFSET space
 	PUSH		OFFSET randArray
 	PUSH		ARRAYSIZE
 	CALL		displayList
@@ -120,6 +136,10 @@ fillArray PROC
 	; set loop & EDI for loop reference
 	MOV			ECX, [EBP + 8]
 	MOV			EDI, [EBP + 20]
+
+	; set seed value for randomizing number
+	CALL	Randomize
+
 	; loop to fill array
 	fillLoop:
 		
@@ -148,8 +168,140 @@ fillArray PROC
 	; restore EBP register
 	POP			EBP
 
-	RET 20
+	RET 16
 fillArray ENDP
+
+; ---------------------------------------------------------------------------------
+; Name: sortList
+; 
+; The procedure sorts an array of ARRAYSIZE in ascending order.
+
+; Preconditions: 
+;
+; Postconditions:
+;
+; Receives:	
+;
+; Returns: 
+; ---------------------------------------------------------------------------------
+sortList PROC
+	
+	; preserve EBP register and set it up as stack pointer
+	PUSH		EBP
+	MOV			EBP, ESP
+
+	; preserve registers
+	PUSH		EAX
+	PUSH		EBX
+	PUSH		ECX
+	PUSH		EDI
+
+	; set loop & EDI for loop reference
+	MOV			ECX, [EBP + 8]
+	SUB			ECX, 1					; due to exchangeg call procedure, 
+	MOV			EDI, [EBP + 12]
+	MOV			EBX, 0					; tracks how many exchanges occur
+
+	; loop to sort arrat by exchanges 
+	sortLoop:   
+
+		; Set up array elements for compare and possible pass to exchange procedure
+		PUSH	EBX
+		MOV		EAX, [EDI]
+		
+		ADD		EDI, 4
+		MOV		EBX, [EDI]
+		SUB		EDI, 4			; restore EDI back
+		
+
+		CMP		EAX, EBX
+		POP		EBX
+		JNA		noExchangeNeeded
+
+		; restore and increment EBX since exchange will occur
+		
+		ADD		EBX, 1
+
+		; exhange elements in array if left > right
+		PUSH		EDI
+		ADD			EDI, 4
+		PUSH		EDI
+		CALL		exchangeElements  
+
+		noExchangeNeeded:
+
+		ADD		EDI, 4				;increment to next index
+		LOOP	sortLoop
+	
+	; reset counter in case of back to sort loop
+	MOV			ECX, [EBP + 8]
+	SUB			ECX, 1
+	MOV			EBX, 0
+	CMP			EBX, 0
+	JNE			sortLoop
+
+
+	; restore registers
+	POP			EDI
+	POP			ECX
+	POP			EBX
+	POP			EAX
+
+	; restore EBP register
+	POP			EBP
+
+	RET 8
+sortList ENDP
+
+; ---------------------------------------------------------------------------------
+; Name: exchangeElements  
+; 
+; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+;
+; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+;
+; Postconditions: someArray is updated with new random values, EDX changed
+;
+; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value. space passed by reference.
+;
+; Returns: someArray updated with random integers within specified range
+; ---------------------------------------------------------------------------------
+exchangeElements PROC
+	
+	; preserve EBP register and set it up as stack pointer
+	PUSH		EBP
+	MOV			EBP, ESP
+
+	; preserver registers
+
+	PUSH		EBX
+	PUSH		ECX
+
+
+	; set registers with first and second index
+	MOV			EDI, [EBP + 8]		; second index
+	MOV			ECX, [EDI]
+
+	MOV			EDI, [EBP + 12]		; first index
+	MOV			EBX, [EDI]
+
+	MOV			EDI, [EBP + 8]	
+	MOV			[EDI], EBX
+
+	MOV			EDI, [EBP + 12]	
+	MOV			[EDI], ECX
+
+
+	; restore registers
+	POP			ECX
+	POP			EBX
+
+
+	; restore EBP register
+	POP			EBP
+
+	RET 8
+exchangeElements ENDP
 
 ; ---------------------------------------------------------------------------------
 ; Name: displayList
@@ -158,9 +310,9 @@ fillArray ENDP
 ;
 ; Preconditions: someArray, LO, HI, ARRAYSIZE exist
 ;
-; Postconditions: someArray is updated with new random values
+; Postconditions: someArray is updated with new random values, EDX changed
 ;
-; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value
+; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value. space passed by reference.
 ;
 ; Returns: someArray updated with random integers within specified range
 ; ---------------------------------------------------------------------------------
@@ -180,18 +332,36 @@ displayList PROC
 	MOV			ECX, [EBP + 8]
 	MOV			EDI, [EBP + 12]
 	
+	; used to track numbers per line
+	MOV			EBX, 0 
 	; loop to display array
+
 	displayLoop:
 		
 		; pass array item into WriteDec
 		MOV		EAX, [EDI]
-		CALL	WriteDec
+		CMP		EBX, 20
+
+		JNE		skipLineReset		; if there are 20 numbers make new line
+		MOV		EBX, 0 
+		CALL	Crlf	
+
+		skipLineReset:
+		CALL	WriteDec			; display number
+
+		MOV		EDX, [EBP + 16]
+		CALL	WriteString			; display space
+
 
 		ADD		EDI, 4				;increment to next index
-
+		ADD		EBX, 1
 		LOOP	displayLoop
 
 
+	; New line
+	CALL	Crlf
+	CALL	Crlf
+	
 	; restore registers
 	POP			EDI
 	POP			ECX

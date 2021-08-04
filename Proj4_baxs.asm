@@ -6,7 +6,7 @@ TITLE Project 4 - Prime Number Calculator     (Proj4_baxs.asm)
 ; Course number/section:   CS271 Section 400
 ; Project Number:  Project 4    Due Date: 26 July 2021
 ; Description: Program that calculates and displays prime numbers given a range input by the user.
-;		The user is prompted to input a number between 1-200. This input is validated, and if it
+;		The user is prompted to input a number between 1-4000. This input is validated, and if it
 ;		is done successfully, all prime numbers from 1 to that number are calcuated and displayed.
 
 
@@ -15,14 +15,14 @@ INCLUDE Irvine32.inc
 ; Integer Constants
 UPPERBOUND = 4000
 LOWERBOUND = 1
-numPerLine = 10
-rowPerPage = 20
+NUMPERLINE = 10
+ROWPERPAGE = 20
 
 .data
 
 ; Intro variables
 programTitle		BYTE	"Scott Bax - Project 4 - Prime Number Calculator", 0
-extraCredit			BYTE	"**EC: Displays up to 4000 primes, shown 20 rows of primes per page", 0
+extraCredit			BYTE	"**EC: Displays up to 4000 primes, shown 20 rows of primes per page.", 0
 
 ; Prompt variables
 numberReqPrompt1	BYTE	"Please enter the amount of prime numbers you would like to see.", 0
@@ -37,6 +37,8 @@ goodBye				BYTE	"Use these prime numbers wisely, See ya!",0
 numberInput			SDWORD	?		  ; user number input
 divByTen			SDWORD	?
 primeHolder			SDWORD	?
+rowHolder			SDWORD	0
+lastLoop			SDWORD	0
 rowNum				SDWORD	0
 
 
@@ -120,6 +122,7 @@ getUserData PROC
 
 	; check if the number is within bounds by CALLing validate
 	CALL validate
+	CALL	Crlf
 
 	RET
 getUserData ENDP
@@ -169,7 +172,7 @@ validate ENDP
 ; 
 ; The procedure will display the amount of primes that the user enters. Will show in rows of 20.
 ;
-; Preconditions: primeHolder, rowNum, rowPerPage, numSpace, numPerLine exist. numberInput have been updated to a number. 
+; Preconditions: primeHolder, rowNum, ROWPERPAGE, numSpace, NUMPERLINE exist. numberInput have been updated to a number. 
 ;
 ; Postconditions: EAX, EBX, ECX, EDX changed. If number of primes to display is under ten, EAX will not change.
 ;
@@ -211,7 +214,7 @@ showPrimes PROC
 
 		
 		; if there are 20 rows clear screen
-		CMP		ECX, rowPerPage
+		CMP		ECX, ROWPERPAGE
 		JE		continueAt20
 
 
@@ -227,15 +230,28 @@ showPrimes PROC
  			CALL	WriteString			; write " "
  
 			POP		EAX
- 			CMP		EAX, numPerLine
+ 			CMP		EAX, NUMPERLINE
  			JNE		noNewLine
+
 			MOV		EAX, 0
+			INC		ECX; increase row count
+			
+			MOV		rowHolder, ECX		; preserve ECX
+
+			POP		ECX	
+			MOV		lastLoop, ECX
+			PUSH	ECX
+
+			MOV		ECX, rowHolder		; restore ECX
+
+			CMP		lastLoop, 1
+			JE		noNewLine
 			CALL	Crlf				; write new line
-			INC		ECX					; increase row count
 
 
 		; jump here if not printing new line
 		noNewLine:
+		
 		
 		MOV		rowNum, ECX				; preserve row total
 		POP		ECX
@@ -359,6 +375,7 @@ farewell PROC
 
 	mov		EDX, OFFSET goodBye			; message
 	call	WriteString
+	call	Crlf
 
 	RET
 farewell ENDP

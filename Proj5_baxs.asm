@@ -112,7 +112,6 @@ introduction PROC
 	MOV			EDX, [EBP + 8]
 	CALL		WriteString
 	CALL		Crlf
-	CALL		Crlf
 
 	; restore EBP register
 	POP			EBP
@@ -420,7 +419,6 @@ displayMedian PROC
 
 	; display title message
 	CALL		WriteString
-	CALL		Crlf
 
 	;calculate average by dividing sum by valid numbers
 	MOV			EAX, ECX
@@ -428,18 +426,12 @@ displayMedian PROC
 	CDQ
 	DIV			EBX
 
-	; EDX remainder...EAX average
-	;MOV			ECX, EAX
-
 	;find difference between remainder and divsor
-	SUB		ECX, EDX
+	MOV		EBX, 2
+	SUB		EBX, EDX
 
-	; difference in ECX
-
-
-
-	;calculate average by dividing sum by valid numbers
-	cmp		ECX, EAX
+	;calculate average by dividing by divisor
+	cmp		EBX, EAX
 	jl		skip_rounding_up
 	mov		EBX, -1
 	add		EAX, EBX
@@ -447,7 +439,17 @@ displayMedian PROC
 	;rounding up got skipped
 	skip_rounding_up:
 
-	CALL		WriteDec
+	;Median in EAX
+	IMUL	EAX, 4
+	
+
+	ADD		EDI, EAX
+
+	MOV     EAX, [EDI]
+
+	CALL	WriteDec
+
+
 	
 
 	; New line

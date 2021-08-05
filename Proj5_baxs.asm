@@ -28,10 +28,13 @@ description		BYTE	"This program generates an array with 200 random integers betw
 
 
 ; Array variables	
-randArray		DWORD   ARRAYSIZE DUP(?)
+randArray		DWORD	ARRAYSIZE DUP(?)
 
 ; Display variables	
-space			DWORD   " ", 0
+space			BYTE	" ", 0
+unsorted		BYTE	"Unsorted random numbers are: ", 0
+sorted			BYTE	"Sorted random numbers are: ", 0
+median			BYTE	"Median value of the array is: ", 0
 
 
 
@@ -50,18 +53,26 @@ main PROC
 	PUSH		ARRAYSIZE
 	CALL		fillArray
 
-	; Display array
+	; Display unsorted array
+	PUSH		OFFSET unsorted
 	PUSH		OFFSET space
 	PUSH		OFFSET randArray
 	PUSH		ARRAYSIZE
 	CALL		displayList
 
-;	; Sort array
+	; Sort array
 	PUSH		OFFSET randArray
 	PUSH		ARRAYSIZE
 	CALL		sortList
 
+	; Display median
+	PUSH		OFFSET median
+	PUSH		OFFSET randArray
+	PUSH		ARRAYSIZE
+	CALL		displayMedian
+
 	; Display array
+	PUSH		OFFSET sorted
 	PUSH		OFFSET space
 	PUSH		OFFSET randArray
 	PUSH		ARRAYSIZE
@@ -325,14 +336,20 @@ displayList PROC
 	PUSH		ECX
 	PUSH		EDI
 
-	; set loop & EDI for loop reference
+	; set loop & EDI for loop reference/set EDX for writeString
 	MOV			ECX, [EBP + 8]
 	MOV			EDI, [EBP + 12]
-	
+	MOV			EDX, [EBP + 20]
+
+	; display title message
+	CALL		WriteString
+	CALL		Crlf
+
 	; used to track numbers per line
 	MOV			EBX, 0 
+	
+	
 	; loop to display array
-
 	displayLoop:
 		
 		; pass array item into WriteDec
@@ -368,7 +385,85 @@ displayList PROC
 	; restore EBP register
 	POP			EBP
 
-	RET 12
+	RET 16
 displayList ENDP
+
+; ---------------------------------------------------------------------------------
+; Name: displayMedian 
+; 
+; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+;
+; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+;
+; Postconditions: someArray is updated with new random values, EDX changed
+;
+; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value. space passed by reference.
+;
+; Returns: someArray updated with random integers within specified range
+; ---------------------------------------------------------------------------------
+displayMedian PROC
+	
+	; preserve EBP register and set it up as stack pointer
+	PUSH		EBP
+	MOV			EBP, ESP
+
+	; preserver registers
+	PUSH		EAX
+	PUSH		EBX
+	PUSH		ECX
+	PUSH		EDI
+
+	; set loop & EDI for loop reference/set EDX for writeString
+	MOV			ECX, [EBP + 8]
+	MOV			EDI, [EBP + 12]
+	MOV			EDX, [EBP + 16]
+
+	; display title message
+	CALL		WriteString
+	CALL		Crlf
+
+	;calculate average by dividing sum by valid numbers
+	MOV			EAX, ECX
+	MOV			EBX, 2
+	CDQ
+	DIV			EBX
+
+	; EDX remainder...EAX average
+	;MOV			ECX, EAX
+
+	;find difference between remainder and divsor
+	SUB		ECX, EDX
+
+	; difference in ECX
+
+
+
+	;calculate average by dividing sum by valid numbers
+	cmp		ECX, EAX
+	jl		skip_rounding_up
+	mov		EBX, -1
+	add		EAX, EBX
+
+	;rounding up got skipped
+	skip_rounding_up:
+
+	CALL		WriteDec
+	
+
+	; New line
+	CALL	Crlf
+	CALL	Crlf
+	
+	; restore registers
+	POP			EDI
+	POP			ECX
+	POP			EBX
+	POP			EAX
+
+	; restore EBP register
+	POP			EBP
+
+	RET 12
+displayMedian  ENDP
 
 END main

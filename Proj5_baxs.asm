@@ -16,6 +16,7 @@ INCLUDE Irvine32.inc
 ARRAYSIZE = 200
 LO = 10
 HI = 29
+COUNTSIZE		TEXTEQU %(HI - LO) + 1
 
 .data
 
@@ -29,12 +30,14 @@ description		BYTE	"This program generates an array with 200 random integers betw
 
 ; Array variables	
 randArray		DWORD	ARRAYSIZE DUP(?)
+countArray		DWORD	COUNTSIZE DUP(?)
 
 ; Display variables	
 space			BYTE	" ", 0
 unsorted		BYTE	"Unsorted random numbers are: ", 0
 sorted			BYTE	"Sorted random numbers are: ", 0
 median			BYTE	"Median value of the array is: ", 0
+counted			BYTE	"The amount each random occurs starting at 10 is: ", 0
 
 
 
@@ -77,6 +80,23 @@ main PROC
 	PUSH		OFFSET randArray
 	PUSH		ARRAYSIZE
 	CALL		displayList
+
+	; Count list
+	PUSH		OFFSET countArray
+	PUSH		OFFSET randArray
+	PUSH		LO
+	PUSH		HI
+	PUSH		ARRAYSIZE
+	CALL		countList
+
+	; Display array
+	PUSH		OFFSET counted
+	PUSH		OFFSET space
+	PUSH		OFFSET countArray
+	PUSH		COUNTSIZE
+	CALL		displayList
+
+
 
 
 
@@ -467,5 +487,95 @@ displayMedian PROC
 
 	RET 12
 displayMedian  ENDP
+
+; ---------------------------------------------------------------------------------
+; Name: countList
+; 
+; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+;
+; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+;
+; Postconditions: someArray is updated with new random values
+;
+; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value
+;
+; Returns: someArray updated with random integers within specified range
+; ---------------------------------------------------------------------------------
+countList PROC
+	
+	; preserve EBP register and set it up as stack pointer
+	PUSH		EBP
+	MOV			EBP, ESP
+
+	; preserver registers
+	PUSH		EAX
+	PUSH		EBX
+	PUSH		ECX
+	PUSH		EDX
+	PUSH		EDI
+
+	; set loop & EDI for loop reference
+	MOV			ECX, [EBP + 8]
+
+	; set countList
+	MOV			ESI, [EBP + 24]
+	SUB			ESI, 4
+
+	; initial values - prev randArray Index in EAX, current randArray Index in EDX
+	MOV			EDI, [EBP + 20]	
+	SUB			EDI, 4
+	MOV			EAX, [EDI]
+	MOV			EBX, 0
+	MOV			EDX, [EBP + 16]		
+
+	; loop to fill array
+	countLoop:
+		
+		
+		
+		ADD		EDI, 4
+		MOV		EAX, [EDI]			; current randArray Index stored in EAX
+		CMP		EDX, EAX
+		JNE		updateCountList
+		ADD		EBX, 1
+		continueLoop:
+		
+
+
+		LOOP	countLoop
+	
+
+	JMP			skip
+
+	; Add index occurence count to new array (all but last index)
+	updateCountList:
+	ADD			EBX, 1
+	ADD			ESI, 4
+	MOV			[ESI], EBX
+	MOV			EBX, 0
+	add			EDX, 1
+	JMP			continueLoop
+
+	; Add last index occurence count to new array
+	skip:
+	ADD			EBX, 1
+	ADD			ESI, 4
+	MOV			[ESI], EBX
+	MOV			EBX, 0
+	add			EDX, 1
+
+	; restore registers
+	POP			EDI
+	POP			EDX
+	POP			ECX
+	POP			EBX
+	POP			EAX
+
+	; restore EBP register
+	POP			EBP
+
+	RET 20
+countList ENDP
+
 
 END main

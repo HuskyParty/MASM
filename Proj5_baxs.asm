@@ -1,7 +1,7 @@
 TITLE Project 5 - Genorating, Sorting, Counting Random Ints     (Proj5_baxs.asm)
 
 ; Author: Scott Bax
-; Last Modified: 4 Aug 2021
+; Last Modified: 5 Aug 2021
 ; OSU email address: baxs@oregonstate.edu
 ; Course number/section:   CS271 Section 400
 ; Project Number:  Project 5    Due Date: 8 Aug 2021
@@ -38,8 +38,7 @@ unsorted		BYTE	"Unsorted random numbers are: ", 0
 sorted			BYTE	"Sorted random numbers are: ", 0
 median			BYTE	"Median value of the array is: ", 0
 counted			BYTE	"The amount each random occurs starting at 10 is: ", 0
-
-
+byeMessage		BYTE	"Thanks for using this program. See ya!", 0
 
 .code
 main PROC
@@ -96,9 +95,9 @@ main PROC
 	PUSH		COUNTSIZE
 	CALL		displayList
 
-
-
-
+	; Bye
+	PUSH		OFFSET byeMessage
+	CALL		bye
 
 	Invoke ExitProcess,0	; exit to operating system
 
@@ -109,11 +108,11 @@ main ENDP
 ; 
 ; The procedure displays programmer name and program description to user. 
 ;
-; Preconditions: intro1 and intro2 exist as strings.
+; Preconditions: nameAndTitle/description exist as strings.
 ;
 ; Postconditions: EDX changed.
 ;
-; Receives:	intro1 and intro2 by reference via the stack (in that order). 
+; Receives:	nameAndTitle/description (reference/input).
 ;
 ; Returns: None.
 ; ---------------------------------------------------------------------------------
@@ -146,9 +145,9 @@ introduction ENDP
 ;
 ; Preconditions: someArray, LO, HI, ARRAYSIZE exist
 ;
-; Postconditions: someArray is updated with new random values
+; Postconditions: someArray is updated with new random values. EDI changed.
 ;
-; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value
+; Receives:	randArray (reference/input-output), ARRAYSIZE/HI/LO (value/input).
 ;
 ; Returns: someArray updated with random integers within specified range
 ; ---------------------------------------------------------------------------------
@@ -206,13 +205,13 @@ fillArray ENDP
 ; 
 ; The procedure sorts an array of ARRAYSIZE in ascending order.
 
-; Preconditions: 
+; Preconditions: randArray and ARRAYSIZE exist
 ;
-; Postconditions:
+; Postconditions: randArray sorted in ascending order. EDI changed.
 ;
-; Receives:	
+; Receives:	randArray (reference/input), ARRAYSIZE (value/input)
 ;
-; Returns: 
+; Returns: randArray sorted in ascending order.
 ; ---------------------------------------------------------------------------------
 sortList PROC
 	
@@ -283,15 +282,15 @@ sortList ENDP
 ; ---------------------------------------------------------------------------------
 ; Name: exchangeElements  
 ; 
-; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+; The procedure will exchange two passed elements in an array by moving places with them. 
 ;
-; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+; Preconditions: randArray and the passed elements exist. 
 ;
-; Postconditions: someArray is updated with new random values, EDX changed
+; Postconditions: randArray is updated with the two passed elments places switched. EDX/EDI changed. 
 ;
-; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value. space passed by reference.
+; Receives:	randArray[first index] (reference/input-output), randArray[second index] (reference/input-output)
 ;
-; Returns: someArray updated with random integers within specified range
+; Returns: randArray is updated with the two passed elments places switched
 ; ---------------------------------------------------------------------------------
 exchangeElements PROC
 	
@@ -306,16 +305,16 @@ exchangeElements PROC
 
 
 	; set registers with first and second index
-	MOV			EDI, [EBP + 8]		; second index
+	MOV			EDI, [EBP + 8]		; second index put in register for switch
 	MOV			ECX, [EDI]
 
-	MOV			EDI, [EBP + 12]		; first index
+	MOV			EDI, [EBP + 12]		; first index put in register for switch
 	MOV			EBX, [EDI]
 
-	MOV			EDI, [EBP + 8]	
+	MOV			EDI, [EBP + 8]		; switch
 	MOV			[EDI], EBX
 
-	MOV			EDI, [EBP + 12]	
+	MOV			EDI, [EBP + 12]		; switch
 	MOV			[EDI], ECX
 
 
@@ -335,13 +334,13 @@ exchangeElements ENDP
 ; 
 ; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
 ;
-; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+; Preconditions: randArray, LO, HI, ARRAYSIZE exist
 ;
-; Postconditions: someArray is updated with new random values, EDX changed
+; Postconditions: randArray is updated with new random values, EDX/EDI changed
 ;
-; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value. space passed by reference.
+; Receives:	randArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value. space passed by reference.
 ;
-; Returns: someArray updated with random integers within specified range
+; Returns: randArray updated with random integers within specified range
 ; ---------------------------------------------------------------------------------
 displayList PROC
 	
@@ -410,15 +409,15 @@ displayList ENDP
 ; ---------------------------------------------------------------------------------
 ; Name: displayMedian 
 ; 
-; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+; The procedure calculates/displays the median number off all the numbers in the sorted randArray. 
 ;
-; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+; Preconditions: (sorted) randArray, median, ARRAYSIZE exist. 
 ;
-; Postconditions: someArray is updated with new random values, EDX changed
+; Postconditions: EDX/EDI changed 
 ;
-; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value. space passed by reference.
+; Receives:	randArray (reference/input), median (references/input), ARRAYSIZE (value/input)
 ;
-; Returns: someArray updated with random integers within specified range
+; Returns: None. 
 ; ---------------------------------------------------------------------------------
 displayMedian PROC
 	
@@ -437,7 +436,7 @@ displayMedian PROC
 	MOV			EDI, [EBP + 12]
 	MOV			EDX, [EBP + 16]
 
-	; display title message
+	; display message
 	CALL		WriteString
 
 	;calculate average by dividing sum by valid numbers
@@ -491,15 +490,16 @@ displayMedian  ENDP
 ; ---------------------------------------------------------------------------------
 ; Name: countList
 ; 
-; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+; The procedure iterates over a list, counts the amount of occurences of each number
+; and adds that amount to a new array.
 ;
-; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+; Preconditions: randArray, LO, HI, counted, countArray, and COUNTSIZE exist.
 ;
-; Postconditions: someArray is updated with new random values
+; Postconditions: countArray is updated with the amount of occurences for each different number. EDI/ESI changed. 
 ;
-; Receives:	someArray passed by referenece as input/output. LO, HI, ARRAYSIZE passed by value
+; Receives:	randArray (reference/input), countArray (referenece input/output), LO, HI, COUNTSIZE (value/input)
 ;
-; Returns: someArray updated with random integers within specified range
+; Returns: countArray updated with the amount of occurences for each different number. 
 ; ---------------------------------------------------------------------------------
 countList PROC
 	
@@ -521,17 +521,15 @@ countList PROC
 	MOV			ESI, [EBP + 24]
 	SUB			ESI, 4
 
-	; initial values - prev randArray Index in EAX, current randArray Index in EDX
+	; starte value for rand array, and set occurence counter
 	MOV			EDI, [EBP + 20]	
 	SUB			EDI, 4
 	MOV			EAX, [EDI]
-	MOV			EBX, 0
+	MOV			EBX, -1
 	MOV			EDX, [EBP + 16]		
 
 	; loop to fill array
 	countLoop:
-		
-		
 		
 		ADD		EDI, 4
 		MOV		EAX, [EDI]			; current randArray Index stored in EAX
@@ -540,11 +538,9 @@ countList PROC
 		ADD		EBX, 1
 		continueLoop:
 		
-
-
 		LOOP	countLoop
 	
-
+	; Jump to add last index to new array
 	JMP			skip
 
 	; Add index occurence count to new array (all but last index)
@@ -576,6 +572,37 @@ countList PROC
 
 	RET 20
 countList ENDP
+
+; ---------------------------------------------------------------------------------
+; Name: bye
+; 
+; The procedure displays a farewell message. 
+;
+; Preconditions: byeMessage exists as a string.
+;
+; Postconditions: EDX changed.
+;
+; Receives:	byeMessage passed by reference via the stack (in that order). 
+;
+; Returns: None.
+; ---------------------------------------------------------------------------------
+bye PROC
+	
+	; preserve EBP register and set it up as stack pointer
+	PUSH		EBP
+	MOV			EBP, ESP
+	
+	; title, name and description of program
+	MOV			EDX, [EBP + 8]
+	CALL		WriteString
+	CALL		Crlf
+
+
+	; restore EBP register
+	POP			EBP
+
+	RET 4
+bye ENDP
 
 
 END main

@@ -244,7 +244,7 @@ Writeval PROC
 	MOV			EDX, intToStringProc
 	MOV			EAX, [EDX]
 	
-	
+	STD
 	_intToStringLoop:
 		MOV		EBX, 10
 		CDQ
@@ -258,10 +258,9 @@ Writeval PROC
 		POP EAX
 		
 		LOOP _intToStringLoop
-	MOV ESI, userNumberProc
-	_writeOutLoop:
-		
-		mDisplayString outToStringProc
+
+
+	mDisplayString outToStringProc
 	;call WriteString
 
 

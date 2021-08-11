@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 10:02:57
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 10:41:23
 <Project 6 - String Primitives and Macros     (Proj6_baxs.as  Page 1 - 1
 
 
@@ -186,24 +186,24 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 10:02:57
  00000034  68 00000057 R			PUSH		OFFSET userNumberSize
  00000039  68 00000053 R			PUSH		OFFSET userNumber
  0000003E  68 0000008D R			PUSH		OFFSET enterNumber
- 00000043  E8 00000018				CALL		Readval
+ 00000043  E8 00000020				CALL		Readval
 						
  00000048  68 0000005F R			PUSH		OFFSET intToString
- 0000004D  53					PUSH		EBX
- 0000004E  50					PUSH		EAX
- 0000004F  E8 00000097				CALL		Writeval
+ 0000004D  68 0000005B R			PUSH		OFFSET userInteger
+ 00000052  68 00000057 R			PUSH		OFFSET userNumberSize
+ 00000057  E8 00000097				CALL		Writeval
 						
- 00000054  83 C7 04				ADD		EDI, 4
+ 0000005C  83 C7 04				ADD		EDI, 4
 						
- 00000057  E2 D6				LOOP	_integerLoop
+ 0000005F  E2 CE				LOOP	_integerLoop
 
 				; Display 
 					
 
 					Invoke ExitProcess,0	; exit to operating system
- 00000059  6A 00	   *	    push   +000000000h
- 0000005B  E8 00000000 E   *	    call   ExitProcess
- 00000060			main ENDP
+ 00000061  6A 00	   *	    push   +000000000h
+ 00000063  E8 00000000 E   *	    call   ExitProcess
+ 00000068			main ENDP
 
 				; ---------------------------------------------------------------------------------
 				; Name: fillArray
@@ -218,93 +218,93 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 10:02:57
 				;
 				; Returns: memory variable returned in EAX
 				; ---------------------------------------------------------------------------------
- 00000060			Readval PROC
+ 00000068			Readval PROC
 					LOCAL		userNumberProc: SDWORD, userNumberSizeProc: SDWORD, enterNumberProc: SDWORD, userIntegerProc: SDWORD
 
 
 					; preserver registers
 					
- 00000060  55		   *	    push   ebp
- 00000061  8B EC	   *	    mov    ebp, esp
- 00000063  83 C4 F0	   *	    add    esp, 0FFFFFFF0h
- 00000066  51				PUSH		ECX
- 00000067  52				PUSH		EDX
- 00000068  57				PUSH		EDI
+ 00000068  55		   *	    push   ebp
+ 00000069  8B EC	   *	    mov    ebp, esp
+ 0000006B  83 C4 F0	   *	    add    esp, 0FFFFFFF0h
+ 0000006E  51				PUSH		ECX
+ 0000006F  52				PUSH		EDX
+ 00000070  57				PUSH		EDI
 					
 
- 00000069  8B 55 08			MOV EDX, [EBP + 8]
- 0000006C  89 55 F4			MOV enterNumberProc, EDX
+ 00000071  8B 55 08			MOV EDX, [EBP + 8]
+ 00000074  89 55 F4			MOV enterNumberProc, EDX
 
- 0000006F  8B 55 0C			MOV EDX, [EBP + 12]
- 00000072  89 55 FC			MOV userNumberProc, EDX
+ 00000077  8B 55 0C			MOV EDX, [EBP + 12]
+ 0000007A  89 55 FC			MOV userNumberProc, EDX
 
- 00000075  8B 55 10			MOV EDX, [EBP + 16]
- 00000078  89 55 F8			MOV userNumberSizeProc, EDX
+ 0000007D  8B 55 10			MOV EDX, [EBP + 16]
+ 00000080  89 55 F8			MOV userNumberSizeProc, EDX
 
- 0000007B  8B 55 14			MOV EDX, [EBP + 20]
- 0000007E  89 55 F0			MOV	userIntegerProc, EDX
+ 00000083  8B 55 14			MOV EDX, [EBP + 20]
+ 00000086  89 55 F0			MOV	userIntegerProc, EDX
 
 					; get user input
 					mGetString enterNumberProc, userNumberProc, userNumberSizeProc, 33
- 00000081  52		     1		PUSH		EDX
- 00000082  50		     1		PUSH		EAX
- 00000083  8B 55 F4	     1		MOV			EDX, enterNumberProc
- 00000086  E8 00000000 E     1		CALL		WriteString
- 0000008B  E8 00000000 E     1		CALL		Crlf
- 00000090  8B 55 FC	     1		MOV			EDX, userNumberProc
- 00000093  B9 00000021	     1		MOV			ECX, 33
- 00000098  E8 00000000 E     1		call		ReadString
- 0000009D  89 55 FC	     1		MOV			userNumberProc, EDX
- 000000A0  89 45 F8	     1		MOV			userNumberSizeProc, EAX
- 000000A3  58		     1		POP			EAX
- 000000A4  5A		     1		POP			EDX
+ 00000089  52		     1		PUSH		EDX
+ 0000008A  50		     1		PUSH		EAX
+ 0000008B  8B 55 F4	     1		MOV			EDX, enterNumberProc
+ 0000008E  E8 00000000 E     1		CALL		WriteString
+ 00000093  E8 00000000 E     1		CALL		Crlf
+ 00000098  8B 55 FC	     1		MOV			EDX, userNumberProc
+ 0000009B  B9 00000021	     1		MOV			ECX, 33
+ 000000A0  E8 00000000 E     1		call		ReadString
+ 000000A5  89 55 FC	     1		MOV			userNumberProc, EDX
+ 000000A8  89 45 F8	     1		MOV			userNumberSizeProc, EAX
+ 000000AB  58		     1		POP			EAX
+ 000000AC  5A		     1		POP			EDX
 
- 000000A5  8B 75 FC			MOV ESI, userNumberProc
- 000000A8  8B 7D F0			MOV	EDI, userIntegerProc
- 000000AB  8B 4D F8			MOV ECX, userNumberSizeProc
- 000000AE  BB 00000000			MOV EBX, 0
+ 000000AD  8B 75 FC			MOV ESI, userNumberProc
+ 000000B0  8B 7D F0			MOV	EDI, userIntegerProc
+ 000000B3  8B 4D F8			MOV ECX, userNumberSizeProc
+ 000000B6  BB 00000000			MOV EBX, 0
 					
- 000000B3  B8 00000000			MOV EAX, 0
- 000000B8				_checkChar:
- 000000B8  AC					LODSB
- 000000B9  2C 30				SUB	AL, 48
- 000000BB  51					PUSH ECX
- 000000BC  83 E9 01				SUB ECX, 1
- 000000BF  53					PUSH EBX
- 000000C0  83 F9 00				cmp ECX, 0
- 000000C3  74 09				JE skipped
- 000000C5					_int:
- 000000C5  BB 0000000A					MOV EBX, 10
- 000000CA  F7 E3					MUL EBX
+ 000000BB  B8 00000000			MOV EAX, 0
+ 000000C0				_checkChar:
+ 000000C0  AC					LODSB
+ 000000C1  2C 30				SUB	AL, 48
+ 000000C3  51					PUSH ECX
+ 000000C4  83 E9 01				SUB ECX, 1
+ 000000C7  53					PUSH EBX
+ 000000C8  83 F9 00				cmp ECX, 0
+ 000000CB  74 09				JE skipped
+ 000000CD					_int:
+ 000000CD  BB 0000000A					MOV EBX, 10
+ 000000D2  F7 E3					MUL EBX
 							
- 000000CC  E2 F7					LOOP _int
- 000000CE					skipped:
- 000000CE  5B					POP EBX
- 000000CF  59					POP ECX
+ 000000D4  E2 F7					LOOP _int
+ 000000D6					skipped:
+ 000000D6  5B					POP EBX
+ 000000D7  59					POP ECX
 
 						
- 000000D0  03 D8				ADD EBX, EAX
- 000000D2  E2 E4				LOOP _checkChar
+ 000000D8  03 D8				ADD EBX, EAX
+ 000000DA  E2 E4				LOOP _checkChar
 
 					
 
- 000000D4  8B 45 F8			MOV EAX, userNumberSizeProc
- 000000D7  8B 55 F0			MOV EDX, userIntegerProc
- 000000DA  89 1A			MOV [EDX], EBX
- 000000DC  8B 4D F8			MOV ECX, userNumberSizeProc
- 000000DF  8B 55 10			MOV EDX, [EBP + 16]
- 000000E2  89 0A			MOV [EDX], ECX
+ 000000DC  8B 45 F8			MOV EAX, userNumberSizeProc
+ 000000DF  8B 55 F0			MOV EDX, userIntegerProc
+ 000000E2  89 1A			MOV [EDX], EBX
+ 000000E4  8B 4D F8			MOV ECX, userNumberSizeProc
+ 000000E7  8B 55 10			MOV EDX, [EBP + 16]
+ 000000EA  89 0A			MOV [EDX], ECX
 					; restore registers
 					
- 000000E4  5F				POP			EDI
- 000000E5  5A				POP			EDX
- 000000E6  59				POP			ECX
+ 000000EC  5F				POP			EDI
+ 000000ED  5A				POP			EDX
+ 000000EE  59				POP			ECX
 					
 
 
- 000000E7  C9		   *	    leave  
- 000000E8  C2 0004			RET 4
- 000000EB			Readval ENDP
+ 000000EF  C9		   *	    leave  
+ 000000F0  C2 0004			RET 4
+ 000000F3			Readval ENDP
 
 				; ---------------------------------------------------------------------------------
 				; Name: fillArray
@@ -319,64 +319,72 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 10:02:57
 				;
 				; Returns: memory variable returned in EAX
 				; ---------------------------------------------------------------------------------
- 000000EB			Writeval PROC
-					LOCAL		intToStringProc: SDWORD, outToStringProc: SDWORD
+ 000000F3			Writeval PROC
+					LOCAL		intToStringProc: SDWORD, outToStringProc: SDWORD, stringSize: SDWORD
 
 
 					; preserver registers
- 000000EB  55		   *	    push   ebp
- 000000EC  8B EC	   *	    mov    ebp, esp
- 000000EE  83 C4 F8	   *	    add    esp, 0FFFFFFF8h
- 000000F1  53				PUSH		EBX
- 000000F2  51				PUSH		ECX
- 000000F3  52				PUSH		EDX
+ 000000F3  55		   *	    push   ebp
+ 000000F4  8B EC	   *	    mov    ebp, esp
+ 000000F6  83 C4 F4	   *	    add    esp, 0FFFFFFF4h
+ 000000F9  53				PUSH		EBX
+ 000000FA  51				PUSH		ECX
+ 000000FB  52				PUSH		EDX
 
- 000000F4  8B 45 08			MOV			EAX, [EBP + 8]
- 000000F7  89 45 FC			MOV			intToStringProc, EAX
+ 000000FC  8B 55 08			MOV			EDX, [EBP + 8]
+ 000000FF  89 55 F4			MOV			stringSize, EDX
 
- 000000FA  8B 55 0C			MOV			EDX, [EBP + 12]
- 000000FD  89 55 F8			MOV			outToStringProc, EDX
+ 00000102  8B 55 0C			MOV			EDX, [EBP + 12]
+ 00000105  89 55 FC			MOV			intToStringProc, EDX
 					
+ 00000108  8B 45 10			MOV			EAX, [EBP + 16]
+ 0000010B  89 45 F8			MOV			outToStringProc, EAX
 
- 00000100  8B 7D F8			MOV			EDI, outToStringProc
+ 0000010E  8B 7D F8			MOV			EDI, outToStringProc
+
+ 00000111  8B 55 F4			MOV			EDX, stringSize
+ 00000114  8B 0A			MOV			ECX, [EDX]
 					
- 00000103  B9 00000001			MOV ECX, 1
- 00000108				_intToStringLoop:
- 00000108  8B 45 FC				mov		EAX, intToStringProc
- 0000010B  BB 0000000A				MOV		EBX, 10
- 00000110  99					CDQ
- 00000111  F7 FB				idiv	EBX
+ 00000116  8B 55 FC			MOV			EDX, intToStringProc
+ 00000119  8B 02			MOV			EAX, [EDX]
+					
+ 0000011B  FD				STD
+ 0000011C				_intToStringLoop:
+ 0000011C  BB 0000000A				MOV		EBX, 10
+ 00000121  99					CDQ
+ 00000122  F7 FB				idiv	EBX
 						
- 00000113  BB 00000000				MOV		EBX, 0
+ 00000124  BB 00000000				MOV		EBX, 0
+ 00000129  50					PUSH EAX
+ 0000012A  8B C2				MOV		EAX, EDX
+ 0000012C  83 C0 30				ADD		EAX, 48
+ 0000012F  AA					STOSB
+ 00000130  58					POP EAX
 						
- 00000118  3B DA				CMP		EBX, EDX
- 0000011A  75 05				JNE  skip
- 0000011C  E8 00000000 E			CALL WriteInt
-						
+ 00000131  E2 E9				LOOP _intToStringLoop
 
- 00000121					skip:
- 00000121  83 C1 01				ADD		ECX, 1
- 00000124  8B C2				MOV EAX, EDX
- 00000126  E8 00000000 E			CALL WriteInt
 
-						;MOV	AL, EDX
-						;STOSB
-						
- 0000012B  E2 DB				LOOP _intToStringLoop
-					;MOV EDX, outToString
+					mDisplayString outToStringProc
+ 00000133  52		     1		PUSH		EDX
+ 00000134  8B 55 F8	     1		MOV			EDX, outToStringProc
+ 00000137  E8 00000000 E     1		CALL		WriteString
+ 0000013C  E8 00000000 E     1		CALL		Crlf
+ 00000141  5A		     1		POP			EDX
 					;call WriteString
 
- 0000012D  5A				POP			EDX
- 0000012E  59				POP			ECX
- 0000012F  5B				POP			EBX
+
+ 00000142  5A				POP			EDX
+ 00000143  59				POP			ECX
+ 00000144  5B				POP			EBX
 
 
- 00000130  C9		   *	    leave  
- 00000131  C2 0004			RET 4
- 00000134			Writeval ENDP
+ 00000145  C9		   *	    leave  
+ 00000146  C2 0004			RET 4
+ 00000149			Writeval ENDP
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 10:02:57
+
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 10:41:23
 <Project 6 - String Primitives and Macros     (Proj6_baxs.as  Symbols 2 - 1
 
 
@@ -480,7 +488,7 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 0000015A Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000134 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000149 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -550,14 +558,14 @@ ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Readval  . . . . . . . . . . . .	P Near	 00000060 _TEXT	Length= 0000008B Public STDCALL
+Readval  . . . . . . . . . . . .	P Near	 00000068 _TEXT	Length= 0000008B Public STDCALL
   userNumberProc . . . . . . . .	DWord	 bp - 00000004
   userNumberSizeProc . . . . . .	DWord	 bp - 00000008
   enterNumberProc  . . . . . . .	DWord	 bp - 0000000C
   userIntegerProc  . . . . . . .	DWord	 bp - 00000010
-  _checkChar . . . . . . . . . .	L Near	 000000B8 _TEXT	
-  _int . . . . . . . . . . . . .	L Near	 000000C5 _TEXT	
-  skipped  . . . . . . . . . . .	L Near	 000000CE _TEXT	
+  _checkChar . . . . . . . . . .	L Near	 000000C0 _TEXT	
+  _int . . . . . . . . . . . . .	L Near	 000000CD _TEXT	
+  skipped  . . . . . . . . . . .	L Near	 000000D6 _TEXT	
 SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -595,12 +603,12 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Writeval . . . . . . . . . . . .	P Near	 000000EB _TEXT	Length= 00000049 Public STDCALL
+Writeval . . . . . . . . . . . .	P Near	 000000F3 _TEXT	Length= 00000056 Public STDCALL
   intToStringProc  . . . . . . .	DWord	 bp - 00000004
   outToStringProc  . . . . . . .	DWord	 bp - 00000008
-  _intToStringLoop . . . . . . .	L Near	 00000108 _TEXT	
-  skip . . . . . . . . . . . . .	L Near	 00000121 _TEXT	
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000060 Public STDCALL
+  stringSize . . . . . . . . . .	DWord	 bp - 0000000C
+  _intToStringLoop . . . . . . .	L Near	 0000011C _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000068 Public STDCALL
   _integerLoop . . . . . . . . .	L Near	 0000002F _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C

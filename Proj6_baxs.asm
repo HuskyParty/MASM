@@ -98,16 +98,17 @@ MOV		ECX, 10
 ; Integer Loop
 _integerLoop:
 		
-		; Readval procedure
-		PUSH		OFFSET userInteger
+		; Gets the user string and converts it to a number
+		PUSH		OFFSET userInteger			; return number address
 		PUSH		OFFSET userNumberSize
 		PUSH		OFFSET userNumber
 		PUSH		OFFSET enterNumber
 		CALL		Readval
 		
-		PUSH		OFFSET intToString
-		PUSH		OFFSET userInteger
-		PUSH		OFFSET userNumberSize
+		
+		; converts number to string
+		PUSH		OFFSET intToString			; return string address
+		PUSH		userInteger
 		CALL		Writeval
 		
 		ADD		EDI, 4
@@ -164,8 +165,9 @@ Readval PROC
 	MOV ECX, userNumberSizeProc
 	MOV EBX, 0
 	
-	MOV EAX, 0
+	
 	_checkChar:
+		MOV EAX, 0
 		LODSB
 		SUB	AL, 48
 		PUSH ECX
@@ -228,40 +230,39 @@ Writeval PROC
 	PUSH		EDX
 
 	MOV			EDX, [EBP + 8]
-	MOV			stringSize, EDX
-
-	MOV			EDX, [EBP + 12]
 	MOV			intToStringProc, EDX
 	
-	MOV			EAX, [EBP + 16]
+	MOV			EAX, [EBP + 12]
 	MOV			outToStringProc, EAX
 
 	MOV			EDI, outToStringProc
 
-	MOV			EDX, stringSize
-	MOV			ECX, [EDX]
+	MOV			EAX, intToStringProc
 	
-	MOV			EDX, intToStringProc
-	MOV			EAX, [EDX]
-	
-	
+	STD
+	MOV			ECX, 1
 	_intToStringLoop:
 		MOV		EBX, 10
 		CDQ
 		idiv	EBX
+
+		cmp EDX, 0
+		JE skipped1
+		ADD ECX, 1
+		
 		
 		MOV		EBX, 0
 		PUSH EAX
 		MOV		EAX, EDX
 		ADD		EAX, 48
+		
 		STOSB
 		POP EAX
-		
+		skipped1:
 		LOOP _intToStringLoop
-	MOV ESI, userNumberProc
-	_writeOutLoop:
-		
-		mDisplayString outToStringProc
+	MOV outToStringProc, EDI
+	ADD outToStringProc, 1
+	mDisplayString outToStringProc
 	;call WriteString
 
 

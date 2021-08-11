@@ -211,8 +211,6 @@ Writeval PROC
 	MOV			EDX, [EBP + 12]
 	MOV			outToStringProc, EDX
 	
-	MOV			EAX, intToStringProc
-	CALL		WriteDec
 
 	MOV			EDI, outToStringProc
 	
@@ -226,12 +224,14 @@ Writeval PROC
 		MOV		EBX, 0
 		
 		CMP		EBX, EDX
-		JE  skip:
+		;JE  skip
 
 		MOV		ECX, 1
 
-		skip:
-		CALL WriteString
+		;skip:
+		;MOV EAX, EDX
+		CALL WriteInt
+
 		;MOV	AL, EDX
 		;STOSB
 		

@@ -104,10 +104,11 @@ _integerLoop:
 		PUSH		OFFSET userNumber
 		PUSH		OFFSET enterNumber
 		CALL		Readval
-		
-		
+		MOV			EBX, 0
+		MOV			EBX, userInteger
+		MOV			[EDI], EBX
 		; converts number to string
-		PUSH		OFFSET intToString			; return string address
+		PUSH		OFFSET intToString			; address used in proc
 		PUSH		userInteger
 		CALL		Writeval
 		
@@ -141,6 +142,7 @@ Readval PROC
 	; preserver registers
 	
 	PUSH		ECX
+	PUSH		EBX
 	PUSH		EDX
 	PUSH		EDI
 	
@@ -200,6 +202,7 @@ Readval PROC
 	
 	POP			EDI
 	POP			EDX
+	POP			EBX
 	POP			ECX
 	
 

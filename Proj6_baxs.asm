@@ -27,13 +27,11 @@ introduction MACRO intro1, intro2
 	POP			EDX
 ENDM
 
-; Integer Constants
-sizeNumMax = 200
 
 mGetString MACRO prompt, userInput, bytesRead, count
 	PUSH		EDX
 	PUSH		EAX
-  ; title, name and description of program
+  ; prompt
 	MOV			EDX, prompt
 	CALL		WriteString
 	CALL		Crlf
@@ -67,12 +65,14 @@ description		BYTE	"This program will ", 10, 13
 				BYTE	"x", 10, 13
 				BYTE	"y", 10, 13
 				BYTE	"z", 10, 13, 0
-userNumber		BYTE	33 DUP(0) ; User number to be entered
+userNumber		SDWORD	?
 userNumberSize  DWORD	?
+userInteger		SDWORD	?
+intToString		SDWORD	?
 
 ; Array variables	
-;randArray		DWORD	ARRAYSIZE DUP(?)
-;countArray		DWORD	COUNTSIZE DUP(?)
+intArray		DWORD	10 DUP(?)
+
 
 ; Data variables
 
@@ -81,7 +81,7 @@ userNumberSize  DWORD	?
 ; Display variables	
 space			BYTE	" ", 0
 enterNumber		BYTE	"Please enter a number that is signed: ", 0
-sorted			BYTE	"Sorted random numbers are: ", 0
+displayNumbers	BYTE	"Check out the following numbers you entered: ", 0
 median			BYTE	"Median value of the array is: ", 0
 counted			BYTE	"The amount each random occurs starting at 10 is: ", 0
 byeMessage		BYTE	"Thanks for using this program. See ya!", 0
@@ -92,11 +92,31 @@ main PROC
 ; inroduction MACRO
 introduction OFFSET nameAndTitle, OFFSET description
 
-; Readval procedure
-PUSH		OFFSET userNumberSize
-PUSH		OFFSET userNumber
-PUSH		OFFSET enterNumber
-CALL		Readval
+
+MOV		EDI, OFFSET intArray
+MOV		ECX, 10
+; Integer Loop
+_integerLoop:
+		
+		; Readval procedure
+		PUSH		OFFSET userInteger
+		PUSH		OFFSET userNumberSize
+		PUSH		OFFSET userNumber
+		PUSH		OFFSET enterNumber
+		CALL		Readval
+		MOV			EBX, [EAX]
+		MOV			[EDI], EBX
+		
+		PUSH		OFFSET intToString
+		PUSH		EBX
+		CALL		Writeval
+		
+		ADD		EDI, 4
+		
+		LOOP	_integerLoop
+
+; Display 
+	
 
 	Invoke ExitProcess,0	; exit to operating system
 main ENDP
@@ -112,16 +132,18 @@ main ENDP
 ;
 ; Receives:	randArray (reference/input-output), ARRAYSIZE/HI/LO (value/input).
 ;
-; Returns: someArray updated with random integers within specified range
+; Returns: memory variable returned in EAX
 ; ---------------------------------------------------------------------------------
 Readval PROC
-	LOCAL		userNumberProc: DWORD, userNumberSizeProc: DWORD, enterNumberProc: DWORD
+	LOCAL		userNumberProc: SDWORD, userNumberSizeProc: SDWORD, enterNumberProc: SDWORD, userIntegerProc: SDWORD
 
 
 	; preserver registers
-	PUSH		EAX
-	PUSH		ECX
 	PUSH		EBX
+	PUSH		ECX
+	PUSH		EDX
+	PUSH		ESI
+	PUSH		EDI
 
 	MOV EDX, [EBP + 8]
 	MOV enterNumberProc, EDX
@@ -132,23 +154,97 @@ Readval PROC
 	MOV EDX, [EBP + 16]
 	MOV userNumberSizeProc, EDX
 
+	MOV EDX, [EBP + 20]
+	MOV	userIntegerProc, EDX
+
 	; get user input
 	mGetString enterNumberProc, userNumberProc, userNumberSizeProc, 33
-	; display user input 
-	mDisplayString userNumberProc
 
+	MOV ESI, userNumberProc
+	MOV	EDI, userIntegerProc
+	MOV ECX, userNumberSizeProc
+	
+	_checkChar:
+		LODSB
+		SUB	AL, 48
+		STOSB
+		LOOP _checkChar
 
-
-
-
+	MOV EAX, userIntegerProc
 
 	; restore registers
-	POP			EBX
+	POP			EDI
+	POP			ESI
+	POP			EDX
 	POP			ECX
-	POP			EAX
+	POP			EBX
 
 
 	RET 4
 Readval ENDP
+
+; ---------------------------------------------------------------------------------
+; Name: fillArray
+; 
+; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+;
+; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+;
+; Postconditions: someArray is updated with new random values. EDI changed.
+;
+; Receives:	randArray (reference/input-output), ARRAYSIZE/HI/LO (value/input).
+;
+; Returns: memory variable returned in EAX
+; ---------------------------------------------------------------------------------
+Writeval PROC
+	LOCAL		intToStringProc: SDWORD, outToStringProc: SDWORD
+
+
+	; preserver registers
+	PUSH		EBX
+	PUSH		ECX
+	PUSH		EDX
+
+	MOV			EDX, [EBP + 8]
+	MOV			intToStringProc, EDX
+
+	MOV			EDX, [EBP + 12]
+	MOV			outToStringProc, EDX
+	
+	MOV			EAX, intToStringProc
+	CALL		WriteDec
+
+	MOV			EDI, outToStringProc
+	
+	MOV ECX, 0
+	_intToStringLoop:
+		mov		EAX, intToStringProc
+		MOV		EBX, 10
+		CDQ
+		idiv	EBX
+		
+		MOV		EBX, 0
+		
+		CMP		EBX, EDX
+		JE  skip:
+
+		MOV		ECX, 1
+
+		skip:
+		CALL WriteString
+		;MOV	AL, EDX
+		;STOSB
+		
+		LOOP _intToStringLoop
+	;MOV EDX, outToString
+	;call WriteString
+
+	POP			EDX
+	POP			ECX
+	POP			EBX
+
+
+	RET 4
+Writeval ENDP
 
 END main

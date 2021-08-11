@@ -104,11 +104,10 @@ _integerLoop:
 		PUSH		OFFSET userNumber
 		PUSH		OFFSET enterNumber
 		CALL		Readval
-		MOV			EBX, [EAX]
-		MOV			[EDI], EBX
 		
 		PUSH		OFFSET intToString
-		PUSH		EBX
+		PUSH		OFFSET userInteger
+		PUSH		OFFSET userNumberSize
 		CALL		Writeval
 		
 		ADD		EDI, 4
@@ -139,11 +138,11 @@ Readval PROC
 
 
 	; preserver registers
-	PUSH		EBX
+	
 	PUSH		ECX
 	PUSH		EDX
-	PUSH		ESI
 	PUSH		EDI
+	
 
 	MOV EDX, [EBP + 8]
 	MOV enterNumberProc, EDX
@@ -163,21 +162,44 @@ Readval PROC
 	MOV ESI, userNumberProc
 	MOV	EDI, userIntegerProc
 	MOV ECX, userNumberSizeProc
+	MOV EBX, 0
 	
+	MOV EAX, 0
 	_checkChar:
 		LODSB
 		SUB	AL, 48
-		STOSB
+		PUSH ECX
+		SUB ECX, 1
+		PUSH EBX
+		cmp ECX, 0
+		JE skipped
+		_int:
+			MOV EBX, 10
+			MUL EBX
+			
+			LOOP _int
+		skipped:
+		POP EBX
+		POP ECX
+
+		
+		ADD EBX, EAX
 		LOOP _checkChar
 
-	MOV EAX, userIntegerProc
+	
 
+	MOV EAX, userNumberSizeProc
+	MOV EDX, userIntegerProc
+	MOV [EDX], EBX
+	MOV ECX, userNumberSizeProc
+	MOV EDX, [EBP + 16]
+	MOV [EDX], ECX
 	; restore registers
+	
 	POP			EDI
-	POP			ESI
 	POP			EDX
 	POP			ECX
-	POP			EBX
+	
 
 
 	RET 4
@@ -197,7 +219,7 @@ Readval ENDP
 ; Returns: memory variable returned in EAX
 ; ---------------------------------------------------------------------------------
 Writeval PROC
-	LOCAL		intToStringProc: SDWORD, outToStringProc: SDWORD
+	LOCAL		intToStringProc: SDWORD, outToStringProc: SDWORD, stringSize: SDWORD
 
 
 	; preserver registers
@@ -206,15 +228,17 @@ Writeval PROC
 	PUSH		EDX
 
 	MOV			EDX, [EBP + 8]
-	MOV			intToStringProc, EDX
+	MOV			stringSize, EDX
 
 	MOV			EDX, [EBP + 12]
-	MOV			outToStringProc, EDX
+	MOV			intToStringProc, EDX
 	
+	MOV			EAX, [EBP + 16]
+	MOV			outToStringProc, EAX
 
-	MOV			EDI, outToStringProc
+	MOV			EDI, intToStringProc
 	
-	MOV ECX, 0
+	MOV ECX, 1
 	_intToStringLoop:
 		mov		EAX, intToStringProc
 		MOV		EBX, 10
@@ -224,12 +248,13 @@ Writeval PROC
 		MOV		EBX, 0
 		
 		CMP		EBX, EDX
-		;JE  skip
+		JNE  skip
+		CALL WriteInt
+		
 
-		MOV		ECX, 1
-
-		;skip:
-		;MOV EAX, EDX
+		skip:
+		ADD		ECX, 1
+		MOV EAX, EDX
 		CALL WriteInt
 
 		;MOV	AL, EDX

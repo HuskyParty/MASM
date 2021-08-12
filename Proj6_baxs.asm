@@ -30,6 +30,7 @@ ENDM
 
 mGetString MACRO prompt, userInput, bytesRead, count
 	PUSH		EDX
+	PUSH		ECX
 	PUSH		EAX
   ; prompt
 	MOV			EDX, prompt
@@ -42,6 +43,7 @@ mGetString MACRO prompt, userInput, bytesRead, count
 	MOV			userInput, EDX
 	MOV			bytesRead, EAX
 	POP			EAX
+	POP			ECX
 	POP			EDX
 ENDM
 
@@ -66,12 +68,12 @@ description		BYTE	"This program will ", 10, 13
 				BYTE	"y", 10, 13
 				BYTE	"z", 10, 13, 0
 userNumber		SDWORD	?
-userNumberSize  DWORD	?
+userNumberSize  SDWORD	?
 userInteger		SDWORD	?
 intToString		SDWORD	?
 
 ; Array variables	
-intArray		DWORD	10 DUP(?)
+intArray		SDWORD	10 DUP(?)
 
 
 ; Data variables
@@ -79,12 +81,7 @@ intArray		DWORD	10 DUP(?)
 
 
 ; Display variables	
-space			BYTE	" ", 0
 enterNumber		BYTE	"Please enter a number that is signed: ", 0
-displayNumbers	BYTE	"Check out the following numbers you entered: ", 0
-median			BYTE	"Median value of the array is: ", 0
-counted			BYTE	"The amount each random occurs starting at 10 is: ", 0
-byeMessage		BYTE	"Thanks for using this program. See ya!", 0
 
 .code
 main PROC
@@ -140,11 +137,13 @@ Readval PROC
 
 
 	; preserver registers
-	
+	PUSH		EAX
 	PUSH		ECX
 	PUSH		EBX
 	PUSH		EDX
 	PUSH		EDI
+	PUSH		ESI
+
 	
 
 	MOV EDX, [EBP + 8]
@@ -179,7 +178,7 @@ Readval PROC
 		JE skipped
 		_int:
 			MOV EBX, 10
-			MUL EBX
+			IMUL EBX
 			
 			LOOP _int
 		skipped:
@@ -194,20 +193,20 @@ Readval PROC
 
 	MOV EAX, userNumberSizeProc
 	MOV EDX, userIntegerProc
+
 	MOV [EDX], EBX
 	MOV ECX, userNumberSizeProc
 	MOV EDX, [EBP + 16]
 	MOV [EDX], ECX
 	; restore registers
-	
+	POP			ESI
 	POP			EDI
 	POP			EDX
 	POP			EBX
 	POP			ECX
+	POP			EAX
 	
-
-
-	RET 4
+	RET 16
 Readval ENDP
 
 ; ---------------------------------------------------------------------------------
@@ -228,9 +227,12 @@ Writeval PROC
 
 
 	; preserver registers
+	PUSH		EAX
 	PUSH		EBX
 	PUSH		ECX
 	PUSH		EDX
+	PUSH		EDI
+	
 
 	MOV			EDX, [EBP + 8]
 	MOV			intToStringProc, EDX
@@ -240,11 +242,13 @@ Writeval PROC
 
 	MOV			EDI, outToStringProc
 
-	MOV			EAX, intToStringProc
+	MOV			EAX, EDX
 	
-	STD
+	
 	MOV			ECX, 1
+	STD
 	_intToStringLoop:
+
 		MOV		EBX, 10
 		CDQ
 		idiv	EBX
@@ -260,21 +264,24 @@ Writeval PROC
 		ADD		EAX, 48
 		
 		STOSB
+		
 		POP EAX
 		skipped1:
 		LOOP _intToStringLoop
+	CLD
 	MOV outToStringProc, EDI
 	ADD outToStringProc, 1
 	mDisplayString outToStringProc
 	;call WriteString
-
-
+	
+	POP			EDI
 	POP			EDX
 	POP			ECX
 	POP			EBX
+	POP			EAX
 
 
-	RET 4
+	RET 8
 Writeval ENDP
 
 END main

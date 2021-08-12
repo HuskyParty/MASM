@@ -83,7 +83,6 @@ intArray		SDWORD	ARRAYSIZE DUP(?)
 
 ; Display variables	
 enterNumber		BYTE	"Please enter a number that is signed: ", 0
-spaceComma		BYTE	" ", 0
 
 .code
 main PROC

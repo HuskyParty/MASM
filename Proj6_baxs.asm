@@ -72,6 +72,7 @@ userNumber		SDWORD	?
 userNumberSize  SDWORD	?
 userInteger		SDWORD	?
 intToString		SDWORD	?
+sign			SDWORD	?
 
 ; Array variables	
 intArray		SDWORD	ARRAYSIZE DUP(?)
@@ -100,6 +101,7 @@ MOV		ECX, ARRAYSIZE
 _integerLoop:
 		
 		; Gets the user string and converts it to a number
+		PUSH		OFFSET sign	
 		PUSH		OFFSET wrongNumber				
 		PUSH		OFFSET userInteger			; return number address
 		PUSH		OFFSET userNumberSize
@@ -172,7 +174,7 @@ main ENDP
 ; Returns: memory variable returned in EAX
 ; ---------------------------------------------------------------------------------
 Readval PROC
-	LOCAL		userNumberProc: SDWORD, userNumberSizeProc: SDWORD, enterNumberProc: SDWORD, userIntegerProc: SDWORD, wrongNumProc: SDWORD
+	LOCAL		userNumberProc: SDWORD, userNumberSizeProc: SDWORD, enterNumberProc: SDWORD, userIntegerProc: SDWORD, wrongNumProc: SDWORD, signProc: SDWORD
 
 
 	; preserver registers
@@ -199,8 +201,33 @@ Readval PROC
 
 	MOV		EDX, [EBP + 24]
 	MOV		wrongNumProc, EDX
+
+	MOV		EDX, [EBP + 28]
+	MOV		signProc, EDX
 	
 	JMP		_skippWrongMessage
+
+	
+	_setPlus:
+		PUSH	EDX
+		PUSH	EAX
+		MOV		EDX, signProc
+		MOV		EAX, 43
+		MOV		[EDX], EAX
+		POP		EAX
+		POP		EDX
+		JMP		_plusOrMinus
+
+	_setMinus:
+		PUSH	EDX
+		PUSH	EAX
+		MOV		EDX, signProc
+		MOV		EAX, 45
+		MOV		[EDX], EAX
+		POP		EAX
+		POP		EDX
+		JMP		_plusOrMinus
+		
 	
 	_tryAgain:
 		PUSH	EDX
@@ -228,10 +255,10 @@ Readval PROC
 
 		;look for positive or negative
 		CMP		EAX, 253				;minus
-		JE		_setplusOrMinus
+		JE		_setMinus
 		
-		CMP		EAX, 251				;minus
-		JE		_setplusOrMinus
+		CMP		EAX, 251				;plus
+		JE		_setPlus
 
 		; check for wrong characters
 		CMP		EAX, 9
@@ -265,6 +292,27 @@ Readval PROC
 	CMP	EBX, 2147483647
 	JA	_tryAgain
 
+	; Add sign if there is one
+		PUSH	EDX
+		PUSH	EAX
+		MOV		EDX, signProc
+		MOV		EAX, [EDX]
+		
+		CMP     EAX, 45
+		JNE		_noSIgn
+
+		;make negative 
+		imul	EBX, -1	
+
+		MOV		EAX, 0
+		MOV		[EDX], EAX			; reset sign
+
+		_noSIgn:
+		POP		EAX
+		POP		EDX
+
+
+
 	MOV [EDX], EBX
 	MOV ECX, userNumberSizeProc
 	MOV EDX, [EBP + 16]
@@ -277,7 +325,7 @@ Readval PROC
 	POP			ECX
 	POP			EAX
 	
-	RET 20
+	RET 24
 Readval ENDP
 
 ; ---------------------------------------------------------------------------------
@@ -304,12 +352,20 @@ Writeval PROC
 	PUSH		EDX
 	PUSH		EDI
 	
-
-	MOV			EDX, [EBP + 8]
-	MOV			intToStringProc, EDX
-	
 	MOV			EAX, [EBP + 12]
 	MOV			outToStringProc, EAX
+
+	MOV			EDX, [EBP + 8]
+	
+	;check if negative
+	CMP			EDX, 0
+	JGE			_notNeg
+		imul	EDX, -1	
+	
+	_notNeg:
+		MOV			intToStringProc, EDX
+	
+
 
 	MOV			EDI, outToStringProc
 
@@ -327,8 +383,8 @@ Writeval PROC
 		cmp EDX, 0
 		
 		; if remainder is zero, go to second check to see if int is done
-		JE skipped1
-		skippedBack:
+		JE _skipped1
+		_skippedBack:
 		ADD ECX, 1
 		
 		
@@ -344,10 +400,15 @@ Writeval PROC
 		LOOP _intToStringLoop
 
 	; special case if there is a digit with a zero, does not terminate wrongly
-	MOV EAX, 1
-	skipped1:
+	JMP _skipOver
+	_skipped1:
 		cmp EAX, 0
-		JNE skippedBack
+		JNE _skippedBack
+		cmp intToStringProc, 0
+		
+		JE	_skippedBack			; single zero case
+
+	_skipOver:
 	CLD
 	MOV outToStringProc, EDI
 	ADD outToStringProc, 1

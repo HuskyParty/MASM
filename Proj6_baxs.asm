@@ -83,7 +83,9 @@ intArray		SDWORD	ARRAYSIZE DUP(?)
 
 ; Display variables	
 enterNumber		BYTE	"Please enter a number that is signed: ", 0
-spaceComma		BYTE	" ", 0
+numbersEntered	BYTE	"Here are the numbers you entered: ", 0
+wrongNumber		BYTE	"Not a signed number or number too big.", 0
+space			BYTE	" ", 0
 
 .code
 main PROC
@@ -98,6 +100,7 @@ MOV		ECX, ARRAYSIZE
 _integerLoop:
 		
 		; Gets the user string and converts it to a number
+		PUSH		OFFSET wrongNumber				
 		PUSH		OFFSET userInteger			; return number address
 		PUSH		OFFSET userNumberSize
 		PUSH		OFFSET userNumber
@@ -114,21 +117,42 @@ _integerLoop:
 		
 		LOOP	_integerLoop
 
+
+; -------------------------
+; Display ARRAY Integers 
+; -------------------------
+
+CALL	Crlf
+MOV		EDX, OFFSET numbersEntered
+CALL	WriteString					; display variables
+CALL	Crlf
+
+;
 MOV		EDI, OFFSET intArray
-MOV		ECX, ARRAYSIZE
+MOV		ECX, ARRAYSIZE				; loop variables
 displayLoop:
 		
 		; pass array item into WriteDec
 		MOV		EAX, [EDI]
 				; converts number to string
-		PUSH		OFFSET intToString			; address used in proc
-		PUSH		EAX
-		CALL		Writeval
-		ADD EDI, 4
+		PUSH	OFFSET intToString			; address used in proc
+		PUSH	EAX
+		CALL	Writeval
+		MOV		EDX, OFFSET space
+		call	WriteString
+		ADD		EDI, 4
 
 		LOOP displayLoop
+CALL	Crlf
 
-; Display 
+; -------------------------
+; Calc/Display Sum 
+; -------------------------
+
+
+; -------------------------
+; Calc/Display Average
+; -------------------------
 	
 
 	Invoke ExitProcess,0	; exit to operating system
@@ -148,7 +172,7 @@ main ENDP
 ; Returns: memory variable returned in EAX
 ; ---------------------------------------------------------------------------------
 Readval PROC
-	LOCAL		userNumberProc: SDWORD, userNumberSizeProc: SDWORD, enterNumberProc: SDWORD, userIntegerProc: SDWORD
+	LOCAL		userNumberProc: SDWORD, userNumberSizeProc: SDWORD, enterNumberProc: SDWORD, userIntegerProc: SDWORD, wrongNumProc: SDWORD
 
 
 	; preserver registers
@@ -161,36 +185,64 @@ Readval PROC
 
 	
 
-	MOV EDX, [EBP + 8]
-	MOV enterNumberProc, EDX
+	MOV		EDX, [EBP + 8]
+	MOV		enterNumberProc, EDX
 
-	MOV EDX, [EBP + 12]
-	MOV userNumberProc, EDX
+	MOV		EDX, [EBP + 12]
+	MOV		userNumberProc, EDX
 
-	MOV EDX, [EBP + 16]
-	MOV userNumberSizeProc, EDX
+	MOV		EDX, [EBP + 16]
+	MOV		userNumberSizeProc, EDX
 
-	MOV EDX, [EBP + 20]
-	MOV	userIntegerProc, EDX
+	MOV		EDX, [EBP + 20]
+	MOV		userIntegerProc, EDX
 
+	MOV		EDX, [EBP + 24]
+	MOV		wrongNumProc, EDX
+	
+	JMP		_skippWrongMessage
+	
+	_tryAgain:
+		PUSH	EDX
+		MOV		EDX, wrongNumProc
+		CALL	WriteString
+		CALL	Crlf
+		POP		EDX
+
+	_skippWrongMessage:
 	; get user input
 	mGetString enterNumberProc, userNumberProc, userNumberSizeProc, 33
 
-	MOV ESI, userNumberProc
-	MOV	EDI, userIntegerProc
-	MOV ECX, userNumberSizeProc
-	MOV EBX, 0
+	MOV		ESI, userNumberProc
+	MOV		EDI, userIntegerProc
+	MOV		ECX, userNumberSizeProc
+	MOV		EBX, 0
+
 	
-	
+	; transform correct values into integer
 	_checkChar:
-		MOV EAX, 0
+		MOV		EAX, 0
 		LODSB
-		SUB	AL, 48
-		PUSH ECX
-		SUB ECX, 1
-		PUSH EBX
-		cmp ECX, 0
-		JE skipped
+		SUB		AL, 48
+
+
+		;look for positive or negative
+		CMP		EAX, 253				;minus
+		JE		_setplusOrMinus
+		
+		CMP		EAX, 251				;minus
+		JE		_setplusOrMinus
+
+		; check for wrong characters
+		CMP		EAX, 9
+		JA		_tryAgain
+		
+		; continue on
+		PUSH	ECX
+		SUB		ECX, 1
+		PUSH	EBX
+		cmp		ECX, 0
+		JE		skipped
 		_int:
 			MOV EBX, 10
 			IMUL EBX
@@ -199,15 +251,19 @@ Readval PROC
 		skipped:
 		POP EBX
 		POP ECX
-
 		
 		ADD EBX, EAX
-		LOOP _checkChar
 
-	
+		; plus or minus found
+		_plusOrMinus:
+
+		LOOP _checkChar
 
 	MOV EAX, userNumberSizeProc
 	MOV EDX, userIntegerProc
+	
+	CMP	EBX, 2147483647
+	JA	_tryAgain
 
 	MOV [EDX], EBX
 	MOV ECX, userNumberSizeProc
@@ -221,7 +277,7 @@ Readval PROC
 	POP			ECX
 	POP			EAX
 	
-	RET 16
+	RET 20
 Readval ENDP
 
 ; ---------------------------------------------------------------------------------

@@ -1,17 +1,16 @@
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/12/21 01:01:05
 <Project 6 - String Primitives and Macros     (Proj6_baxs.as  Page 1 - 1
 
 
 				TITLE Project 6 - String Primitives and Macros     (Proj6_baxs.asm)
 
 				; Author: Scott Bax
-				; Last Modified: 10 Aug 2021
+				; Last Modified: 12 Aug 2021
 				; OSU email address: baxs@oregonstate.edu
 				; Course number/section:   CS271 Section 400
 				; Project Number:  Project 6    Due Date: 13 Aug 2021
-				; Description: 
-				;		
-				;		
+				; Description: Program that uses macros and procedurs to validate and get 10 signed integers from 
+				;		a user, store them in an array, display them, and provide the sum and average of all numbers
 				;		
 
 				INCLUDE Irvine32.inc
@@ -33,7 +32,19 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
 			      C .LIST
 			      C 
 
-				;intro macro
+				; ---------------------------------------------------------------------------------
+				; Name: introduction
+				;
+				; Introduced program to user with two messages
+				;
+				; Preconditions: do not use eax, ecx, esi as arguments
+				;
+				; Receives:
+				; intro1 = display programmer name and title of program
+				; intro2 = displays description of program
+				;
+				; returns: None
+				; ---------------------------------------------------------------------------------
 				introduction MACRO intro1, intro2
 					PUSH		EDX
 				  ; title, name and description of program
@@ -42,35 +53,70 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
 					CALL		Crlf
 					CALL		Crlf
 
+					; program description
 					MOV			EDX, intro2
 					CALL		WriteString
 					CALL		Crlf
 					POP			EDX
 				ENDM
 
-
+				; ---------------------------------------------------------------------------------
+				; Name: mGetString
+				;
+				; Gets string from user and converts it to a signed number
+				;
+				; Preconditions: do not use eax, ecx, esi as arguments
+				;
+				; Receives:
+				; prompt = display message asking for number, passed by reference
+				; userInput = variable to hold user message passed by reference
+				; bytesRead = holds size of number passed by reference
+				; count = size the number can be passed by value
+				;
+				; returns: 
+				; userInput = user number is at passed address
+				; bytesRead = size is at passed address
+				; ---------------------------------------------------------------------------------
 				mGetString MACRO prompt, userInput, bytesRead, count
 					PUSH		EDX
 					PUSH		ECX
 					PUSH		EAX
-				  ; prompt
+					
+					; prompt
 					MOV			EDX, prompt
 					CALL		WriteString
 					CALL		Crlf
 
+					; read string
 					MOV			EDX, userInput
 					MOV			ECX, count
 					call		ReadString
+
+					; store numbers
 					MOV			userInput, EDX
 					MOV			bytesRead, EAX
+
 					POP			EAX
 					POP			ECX
 					POP			EDX
 				ENDM
 
+				; ---------------------------------------------------------------------------------
+				; Name: mDisplayString
+				;
+				; Displays a passed string.
+				;
+				; Preconditions: do not use eax, ecx, esi as arguments
+				;
+				; Receives:
+				; passedString = the string needing to be displayed passed by reference. 
+				;
+				; returns: None. 
+				; ---------------------------------------------------------------------------------
 				mDisplayString MACRO passedString
 					PUSH		EDX
-				  ; title, name and description of program
+
+				  ; Displays string
 					MOV			EDX, passedString
 					CALL		WriteString
 
@@ -79,7 +125,7 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
 
 
 				; Integer Constants
- = 00000002			ARRAYSIZE = 2
+ = 0000000A			ARRAYSIZE = 10
 
  00000000			.data
 
@@ -95,31 +141,72 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
 	   73 20 61 6E 64
 	   20 4D 61 63 72
 	   6F 73 00
- 00000035 54 68 69 73 20	description		BYTE	"This program will ", 10, 13
+ 00000035 54 68 69 73 20	description		BYTE	"This program will take 10 signed numbers as strings and convert them to integers. ", 10, 13
 	   70 72 6F 67 72
 	   61 6D 20 77 69
-	   6C 6C 20 0A 0D
- 00000049  78 0A 0D						BYTE	"x", 10, 13
- 0000004C  79 0A 0D						BYTE	"y", 10, 13
- 0000004F  7A 0A 0D 00						BYTE	"z", 10, 13, 0
- 00000053 00000000		userNumber		SDWORD	?
- 00000057 00000000		userNumberSize  SDWORD	?
- 0000005B 00000000		userInteger		SDWORD	?
- 0000005F 00000000		intToString		SDWORD	?
- 00000063 00000000		sign			SDWORD	?
+	   6C 6C 20 74 61
+	   6B 65 20 31 30
+	   20 73 69 67 6E
+	   65 64 20 6E 75
+	   6D 62 65 72 73
+	   20 61 73 20 73
+	   74 72 69 6E 67
+	   73 20 61 6E 64
+	   20 63 6F 6E 76
+	   65 72 74 20 74
+	   68 65 6D 20 74
+	   6F 20 69 6E 74
+	   65 67 65 72 73
+	   2E 20 0A 0D
+ 00000089  49 74 20 77 69					BYTE	"It will store all numbers in an array and calculate the sum and average of all the numbers. ", 10, 13
+	   6C 6C 20 73 74
+	   6F 72 65 20 61
+	   6C 6C 20 6E 75
+	   6D 62 65 72 73
+	   20 69 6E 20 61
+	   6E 20 61 72 72
+	   61 79 20 61 6E
+	   64 20 63 61 6C
+	   63 75 6C 61 74
+	   65 20 74 68 65
+	   20 73 75 6D 20
+	   61 6E 64 20 61
+	   76 65 72 61 67
+	   65 20 6F 66 20
+	   61 6C 6C 20 74
+	   68 65 20 6E 75
+	   6D 62 65 72 73
+	   2E 20 0A 0D
+ 000000E7  46 69 6E 61 6C					BYTE	"Finally, the sum/average, including the array will be printed out.", 10, 13
+	   6C 79 2C 20 74
+	   68 65 20 73 75
+	   6D 2F 61 76 65
+	   72 61 67 65 2C
+	   20 69 6E 63 6C
+	   75 64 69 6E 67
+	   20 74 68 65 20
+	   61 72 72 61 79
+	   20 77 69 6C 6C
+	   20 62 65 20 70
+	   72 69 6E 74 65
+	   64 20 6F 75 74
+	   2E 0A 0D
+
+				; data variables
+ 0000012B 00000000		userNumber		SDWORD	?
+ 0000012F 00000000		userNumberSize  SDWORD	?
+ 00000133 00000000		userInteger		SDWORD	?
+ 00000137 00000000		intToString		SDWORD	?
+ 0000013B 00000000		sign			SDWORD	?
 
 				; Array variables	
- 00000067  00000002 [		intArray		SDWORD	ARRAYSIZE DUP(?)
+ 0000013F  0000000A [		intArray		SDWORD	ARRAYSIZE DUP(?)
 	    00000000
 	   ]
 
 
-				; Data variables
-				; 2147483647
-
-
 				; Display variables	
- 0000006F 50 6C 65 61 73	enterNumber		BYTE	"Please enter a number that is signed: ", 0
+ 00000167 50 6C 65 61 73	enterNumber		BYTE	"Please enter a number that is signed: ", 0
 	   65 20 65 6E 74
 	   65 72 20 61 20
 	   6E 75 6D 62 65
@@ -127,14 +214,14 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
 	   74 20 69 73 20
 	   73 69 67 6E 65
 	   64 3A 20 00
- 00000096 48 65 72 65 20	numbersEntered	BYTE	"Here are the numbers you entered: ", 0
+ 0000018E 48 65 72 65 20	numbersEntered	BYTE	"Here are the numbers you entered: ", 0
 	   61 72 65 20 74
 	   68 65 20 6E 75
 	   6D 62 65 72 73
 	   20 79 6F 75 20
 	   65 6E 74 65 72
 	   65 64 3A 20 00
- 000000B9 4E 6F 74 20 61	wrongNumber		BYTE	"Not a signed number or number too big.", 0
+ 000001B1 4E 6F 74 20 61	wrongNumber		BYTE	"Not a signed number or number too big.", 0
 	   20 73 69 67 6E
 	   65 64 20 6E 75
 	   6D 62 65 72 20
@@ -142,12 +229,30 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
 	   6D 62 65 72 20
 	   74 6F 6F 20 62
 	   69 67 2E 00
- 000000E0 20 00			space			BYTE	" ", 0
+ 000001D8 20 00			space			BYTE	" ", 0
+ 000001DA 54 68 65 20 73	sumMessage		BYTE	"The sum off theses numbers is: ", 0
+	   75 6D 20 6F 66
+	   66 20 74 68 65
+	   73 65 73 20 6E
+	   75 6D 62 65 72
+	   73 20 69 73 3A
+	   20 00
+ 000001FA 54 68 65 20 72	averageMessage	BYTE	"The rounded average off theses numbers is: ", 0
+	   6F 75 6E 64 65
+	   64 20 61 76 65
+	   72 61 67 65 20
+	   6F 66 66 20 74
+	   68 65 73 65 73
+	   20 6E 75 6D 62
+	   65 72 73 20 69
+	   73 3A 20 00
+ 00000226 53 65 65 20 79	bye				BYTE	"See ya!", 0
+	   61 21 00
 
  00000000			.code
  00000000			main PROC
 
-				; inroduction MACRO
+				; Call inroduction MACRO
 				introduction OFFSET nameAndTitle, OFFSET description
  00000000  52		     1		PUSH		EDX
  00000001  BA 00000000 R     1		MOV			EDX, OFFSET nameAndTitle
@@ -160,52 +265,57 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
  00000024  5A		     1		POP			EDX
 
 
- 00000025  BF 00000067 R	MOV		EDI, OFFSET intArray
- 0000002A  B9 00000002		MOV		ECX, ARRAYSIZE
-				; Integer Loop
+				; -------------------------
+				; Get Integers and store in Array. 
+				; -------------------------
+ 00000025  BF 0000013F R	MOV		EDI, OFFSET intArray
+ 0000002A  B9 0000000A		MOV		ECX, ARRAYSIZE
  0000002F			_integerLoop:
 						
 						; Gets the user string and converts it to a number
- 0000002F  68 00000063 R			PUSH		OFFSET sign	
- 00000034  68 000000B9 R			PUSH		OFFSET wrongNumber				
- 00000039  68 0000005B R			PUSH		OFFSET userInteger			; return number address
- 0000003E  68 00000057 R			PUSH		OFFSET userNumberSize
- 00000043  68 00000053 R			PUSH		OFFSET userNumber
- 00000048  68 0000006F R			PUSH		OFFSET enterNumber
- 0000004D  E8 00000058				CALL		Readval
+ 0000002F  68 0000013B R			PUSH		OFFSET sign	
+ 00000034  68 000001B1 R			PUSH		OFFSET wrongNumber				
+ 00000039  68 00000133 R			PUSH		OFFSET userInteger			; return number address
+ 0000003E  68 0000012F R			PUSH		OFFSET userNumberSize
+ 00000043  68 0000012B R			PUSH		OFFSET userNumber
+ 00000048  68 00000167 R			PUSH		OFFSET enterNumber
+ 0000004D  E8 000000C7				CALL		Readval						; Proc Call
+
+						; store in array
  00000052  BB 00000000				MOV			EBX, 0
- 00000057  8B 1D 0000005B R			MOV			EBX, userInteger
+ 00000057  8B 1D 00000133 R			MOV			EBX, userInteger
  0000005D  89 1F				MOV			[EDI], EBX
 
 
-
-						
  0000005F  83 C7 04				ADD		EDI, 4
 						
  00000062  E2 CB				LOOP	_integerLoop
 
 
 				; -------------------------
-				; Display ARRAY Integers 
+				; Display Array Integers 
 				; -------------------------
 
  00000064  E8 00000000 E	CALL	Crlf
- 00000069  BA 00000096 R	MOV		EDX, OFFSET numbersEntered
- 0000006E  E8 00000000 E	CALL	WriteString					; display variables
+ 00000069  BA 0000018E R	MOV		EDX, OFFSET numbersEntered
+ 0000006E  E8 00000000 E	CALL	WriteString					; display message
  00000073  E8 00000000 E	CALL	Crlf
 
-				;
- 00000078  BF 00000067 R	MOV		EDI, OFFSET intArray
- 0000007D  B9 00000002		MOV		ECX, ARRAYSIZE				; loop variables
+				; set up loop
+ 00000078  BF 0000013F R	MOV		EDI, OFFSET intArray
+ 0000007D  B9 0000000A		MOV		ECX, ARRAYSIZE				; loop variables
  00000082			displayLoop:
 						
 						; pass array item into WriteDec
  00000082  8B 07				MOV		EAX, [EDI]
-								; converts number to string
- 00000084  68 0000005F R			PUSH	OFFSET intToString			; address used in proc
+						
+						; set up and use Writeval PROC
+ 00000084  68 00000137 R			PUSH	OFFSET intToString			; address used in proc
  00000089  50					PUSH	EAX
- 0000008A  E8 00000125				CALL	Writeval
- 0000008F  BA 000000E0 R			MOV		EDX, OFFSET space
+ 0000008A  E8 000001A3				CALL	Writeval
+
+						; add a space between numbers
+ 0000008F  BA 000001D8 R			MOV		EDX, OFFSET space
  00000094  E8 00000000 E			call	WriteString
  00000099  83 C7 04				ADD		EDI, 4
 
@@ -216,311 +326,385 @@ Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
 				; Calc/Display Sum 
 				; -------------------------
 
+				; set up loop
+ 000000A3  BF 0000013F R	MOV		EDI, OFFSET intArray
+ 000000A8  B9 0000000A		MOV		ECX, ARRAYSIZE				
+ 000000AD			addLoop:
+						
+						; grab array item
+ 000000AD  8B 07				MOV		EAX, [EDI]
+						
+						; add up continually
+ 000000AF  03 D8				ADD		EBX, EAX	
+						
+						; move along the index
+ 000000B1  83 C7 04				ADD		EDI, 4
+
+ 000000B4  E2 F7				LOOP addLoop
+
+				; Display message
+ 000000B6  BA 000001DA R	MOV		EDX, OFFSET sumMessage
+ 000000BB  E8 00000000 E	call	WriteString
+ 000000C0  E8 00000000 E	CALL	Crlf						
+
+				; use Writeval PROC to display sum
+ 000000C5  68 00000137 R	PUSH	OFFSET intToString			
+ 000000CA  53			PUSH	EBX
+ 000000CB  E8 00000162		CALL	Writeval
+ 000000D0  E8 00000000 E	CALL	Crlf
 
 				; -------------------------
 				; Calc/Display Average
 				; -------------------------
-					
-
-					Invoke ExitProcess,0	; exit to operating system
- 000000A3  6A 00	   *	    push   +000000000h
- 000000A5  E8 00000000 E   *	    call   ExitProcess
- 000000AA			main ENDP
-
-				; ---------------------------------------------------------------------------------
-				; Name: fillArray
 				; 
-				; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
-				;
-				; Preconditions: someArray, LO, HI, ARRAYSIZE exist
-				;
-				; Postconditions: someArray is updated with new random values. EDI changed.
-				;
-				; Receives:	randArray (reference/input-output), ARRAYSIZE/HI/LO (value/input).
-				;
-				; Returns: memory variable returned in EAX
+
+				; display message
+ 000000D5  BA 000001FA R	MOV		EDX, OFFSET averageMessage
+ 000000DA  E8 00000000 E	call	WriteString
+ 000000DF  E8 00000000 E	CALL	Crlf
+
+				; divide for average
+ 000000E4  8B C3		MOV		EAX, EBX
+ 000000E6  BB 0000000A		MOV		EBX, 10
+ 000000EB  99			CDQ
+ 000000EC  F7 FB		idiv	EBX
+
+				; display average
+ 000000EE  68 00000137 R	PUSH	OFFSET intToString			; address used in proc
+ 000000F3  50			PUSH	EAX
+ 000000F4  E8 00000139		CALL	Writeval
+ 000000F9  E8 00000000 E	CALL	Crlf
+ 000000FE  E8 00000000 E	CALL	Crlf
+
+				; -------------------------
+				; Bye Message
+				; -------------------------
+ 00000103  BA 00000226 R	MOV		EDX, OFFSET bye
+ 00000108  E8 00000000 E	call	WriteString
+ 0000010D  E8 00000000 E	CALL	Crlf
+					
+					Invoke ExitProcess,0	; exit to operating system
+ 00000112  6A 00	   *	    push   +000000000h
+ 00000114  E8 00000000 E   *	    call   ExitProcess
+ 00000119			main ENDP
+
 				; ---------------------------------------------------------------------------------
- 000000AA			Readval PROC
+				; Name: Readval
+				; 
+				; The procedure will get a number from a user and validate it based on criteria. It will then update that address of the integer
+				;
+				; Preconditions: variable addresses exist
+				;
+				; Postconditions: varialbes are updated without being called on. 
+				;
+				; Receives:	userNumberProc (reference/input-output), userNumberSizeProc (reference/input-output) enterNumberProc (reference/input)
+				;           wrongNumProc (reference/input) signProc (reference/input-output).
+				;
+				; Returns: values are updated without changing registers or calling variables direactly
+				; ---------------------------------------------------------------------------------
+ 00000119			Readval PROC
 					LOCAL		userNumberProc: SDWORD, userNumberSizeProc: SDWORD, enterNumberProc: SDWORD, userIntegerProc: SDWORD, wrongNumProc: SDWORD, signProc: SDWORD
 
 
 					; preserver registers
- 000000AA  55		   *	    push   ebp
- 000000AB  8B EC	   *	    mov    ebp, esp
- 000000AD  83 C4 E8	   *	    add    esp, 0FFFFFFE8h
- 000000B0  50				PUSH		EAX
- 000000B1  51				PUSH		ECX
- 000000B2  53				PUSH		EBX
- 000000B3  52				PUSH		EDX
- 000000B4  57				PUSH		EDI
- 000000B5  56				PUSH		ESI
+ 00000119  55		   *	    push   ebp
+ 0000011A  8B EC	   *	    mov    ebp, esp
+ 0000011C  83 C4 E8	   *	    add    esp, 0FFFFFFE8h
+ 0000011F  50				PUSH		EAX
+ 00000120  51				PUSH		ECX
+ 00000121  53				PUSH		EBX
+ 00000122  52				PUSH		EDX
+ 00000123  57				PUSH		EDI
+ 00000124  56				PUSH		ESI
 
 					
+					; load arguments into local variables
+ 00000125  8B 55 08			MOV		EDX, [EBP + 8]
+ 00000128  89 55 F4			MOV		enterNumberProc, EDX
 
- 000000B6  8B 55 08			MOV		EDX, [EBP + 8]
- 000000B9  89 55 F4			MOV		enterNumberProc, EDX
+ 0000012B  8B 55 0C			MOV		EDX, [EBP + 12]
+ 0000012E  89 55 FC			MOV		userNumberProc, EDX
 
- 000000BC  8B 55 0C			MOV		EDX, [EBP + 12]
- 000000BF  89 55 FC			MOV		userNumberProc, EDX
+ 00000131  8B 55 10			MOV		EDX, [EBP + 16]
+ 00000134  89 55 F8			MOV		userNumberSizeProc, EDX
 
- 000000C2  8B 55 10			MOV		EDX, [EBP + 16]
- 000000C5  89 55 F8			MOV		userNumberSizeProc, EDX
+ 00000137  8B 55 14			MOV		EDX, [EBP + 20]
+ 0000013A  89 55 F0			MOV		userIntegerProc, EDX
 
- 000000C8  8B 55 14			MOV		EDX, [EBP + 20]
- 000000CB  89 55 F0			MOV		userIntegerProc, EDX
+ 0000013D  8B 55 18			MOV		EDX, [EBP + 24]
+ 00000140  89 55 EC			MOV		wrongNumProc, EDX
 
- 000000CE  8B 55 18			MOV		EDX, [EBP + 24]
- 000000D1  89 55 EC			MOV		wrongNumProc, EDX
-
- 000000D4  8B 55 1C			MOV		EDX, [EBP + 28]
- 000000D7  89 55 E8			MOV		signProc, EDX
+ 00000143  8B 55 1C			MOV		EDX, [EBP + 28]
+ 00000146  89 55 E8			MOV		signProc, EDX
 					
- 000000DA  EB 32			JMP		_skippWrongMessage
+ 00000149  EB 32			JMP		_skippWrongMessage
 
-					
- 000000DC				_setPlus:
- 000000DC  52					PUSH	EDX
- 000000DD  50					PUSH	EAX
- 000000DE  8B 55 E8				MOV		EDX, signProc
- 000000E1  B8 0000002B				MOV		EAX, 43
- 000000E6  89 02				MOV		[EDX], EAX
- 000000E8  58					POP		EAX
- 000000E9  5A					POP		EDX
- 000000EA  E9 00000085				JMP		_plusOrMinus
+					; conditionals to update sign/display error message
+ 0000014B				_setPlus:
+ 0000014B  52					PUSH	EDX
+ 0000014C  50					PUSH	EAX
 
- 000000EF				_setMinus:
- 000000EF  52					PUSH	EDX
- 000000F0  50					PUSH	EAX
- 000000F1  8B 55 E8				MOV		EDX, signProc
- 000000F4  B8 0000002D				MOV		EAX, 45
- 000000F9  89 02				MOV		[EDX], EAX
- 000000FB  58					POP		EAX
- 000000FC  5A					POP		EDX
- 000000FD  EB 75				JMP		_plusOrMinus
+ 0000014D  8B 55 E8				MOV		EDX, signProc
+ 00000150  B8 0000002B				MOV		EAX, 43
+ 00000155  89 02				MOV		[EDX], EAX					; create sign
+
+ 00000157  58					POP		EAX
+ 00000158  5A					POP		EDX
+ 00000159  E9 0000008E				JMP		_plusOrMinus
+
+ 0000015E				_setMinus:
+ 0000015E  52					PUSH	EDX
+ 0000015F  50					PUSH	EAX
+
+ 00000160  8B 55 E8				MOV		EDX, signProc
+ 00000163  B8 0000002D				MOV		EAX, 45
+ 00000168  89 02				MOV		[EDX], EAX					; create sign
+
+ 0000016A  58					POP		EAX
+ 0000016B  5A					POP		EDX
+ 0000016C  EB 7E				JMP		_plusOrMinus
 						
 					
- 000000FF				_tryAgain:
- 000000FF  52					PUSH	EDX
- 00000100  8B 55 EC				MOV		EDX, wrongNumProc
- 00000103  E8 00000000 E			CALL	WriteString
- 00000108  E8 00000000 E			CALL	Crlf
- 0000010D  5A					POP		EDX
+ 0000016E				_tryAgain:
+ 0000016E  52					PUSH	EDX
+ 0000016F  8B 55 EC				MOV		EDX, wrongNumProc
+ 00000172  E8 00000000 E			CALL	WriteString					; error message
+ 00000177  E8 00000000 E			CALL	Crlf
+ 0000017C  5A					POP		EDX
 
- 0000010E				_skippWrongMessage:
-					; get user input
+ 0000017D				_skippWrongMessage:
+
+					; get user input by MACRO CALL
 					mGetString enterNumberProc, userNumberProc, userNumberSizeProc, 33
- 0000010E  52		     1		PUSH		EDX
- 0000010F  51		     1		PUSH		ECX
- 00000110  50		     1		PUSH		EAX
- 00000111  8B 55 F4	     1		MOV			EDX, enterNumberProc
- 00000114  E8 00000000 E     1		CALL		WriteString
- 00000119  E8 00000000 E     1		CALL		Crlf
- 0000011E  8B 55 FC	     1		MOV			EDX, userNumberProc
- 00000121  B9 00000021	     1		MOV			ECX, 33
- 00000126  E8 00000000 E     1		call		ReadString
- 0000012B  89 55 FC	     1		MOV			userNumberProc, EDX
- 0000012E  89 45 F8	     1		MOV			userNumberSizeProc, EAX
- 00000131  58		     1		POP			EAX
- 00000132  59		     1		POP			ECX
- 00000133  5A		     1		POP			EDX
+ 0000017D  52		     1		PUSH		EDX
+ 0000017E  51		     1		PUSH		ECX
+ 0000017F  50		     1		PUSH		EAX
+ 00000180  8B 55 F4	     1		MOV			EDX, enterNumberProc
+ 00000183  E8 00000000 E     1		CALL		WriteString
+ 00000188  E8 00000000 E     1		CALL		Crlf
+ 0000018D  8B 55 FC	     1		MOV			EDX, userNumberProc
+ 00000190  B9 00000021	     1		MOV			ECX, 33
+ 00000195  E8 00000000 E     1		call		ReadString
+ 0000019A  89 55 FC	     1		MOV			userNumberProc, EDX
+ 0000019D  89 45 F8	     1		MOV			userNumberSizeProc, EAX
+ 000001A0  58		     1		POP			EAX
+ 000001A1  59		     1		POP			ECX
+ 000001A2  5A		     1		POP			EDX
 
- 00000134  8B 75 FC			MOV		ESI, userNumberProc
- 00000137  8B 7D F0			MOV		EDI, userIntegerProc
- 0000013A  8B 4D F8			MOV		ECX, userNumberSizeProc
- 0000013D  BB 00000000			MOV		EBX, 0
 
-					
+					; transfer local variables that were altered to registers for use in transforming
+ 000001A3  8B 75 FC			MOV		ESI, userNumberProc
+ 000001A6  8B 7D F0			MOV		EDI, userIntegerProc
+ 000001A9  8B 4D F8			MOV		ECX, userNumberSizeProc
+ 000001AC  BB 00000000			MOV		EBX, 0
+
+ 000001B1  83 F9 0A			CMP		ECX, 10
+ 000001B4  77 B8			JA		_tryAgain
 					; transform correct values into integer
- 00000142				_checkChar:
- 00000142  B8 00000000				MOV		EAX, 0
- 00000147  AC					LODSB
- 00000148  2C 30				SUB		AL, 48
+ 000001B6				_checkChar:
+ 000001B6  B8 00000000				MOV		EAX, 0
+ 000001BB  AC					LODSB
+ 000001BC  2C 30				SUB		AL, 48
 
 
 						;look for positive or negative
- 0000014A  3D 000000FD				CMP		EAX, 253				;minus
- 0000014F  74 9E				JE		_setMinus
+ 000001BE  3D 000000FD				CMP		EAX, 253				;minus
+ 000001C3  74 99				JE		_setMinus
 						
- 00000151  3D 000000FB				CMP		EAX, 251				;plus
- 00000156  74 84				JE		_setPlus
+ 000001C5  3D 000000FB				CMP		EAX, 251				;plus
+ 000001CA  0F 84 FFFFFF7B			JE		_setPlus
 
 						; check for wrong characters
- 00000158  83 F8 09				CMP		EAX, 9
- 0000015B  77 A2				JA		_tryAgain
+ 000001D0  83 F8 09				CMP		EAX, 9
+ 000001D3  77 99				JA		_tryAgain
 						
 						; continue on
- 0000015D  51					PUSH	ECX
- 0000015E  83 E9 01				SUB		ECX, 1
- 00000161  53					PUSH	EBX
- 00000162  83 F9 00				cmp		ECX, 0
- 00000165  74 09				JE		skipped
- 00000167					_int:
- 00000167  BB 0000000A					MOV EBX, 10
- 0000016C  F7 EB					IMUL EBX
+ 000001D5  51					PUSH	ECX
+ 000001D6  83 E9 01				SUB		ECX, 1
+ 000001D9  53					PUSH	EBX
+ 000001DA  83 F9 00				cmp		ECX, 0
+ 000001DD  74 09				JE		skipped
+ 000001DF					_int:
+ 000001DF  BB 0000000A					MOV EBX, 10
+ 000001E4  F7 EB					IMUL EBX
 							
- 0000016E  E2 F7					LOOP _int
- 00000170					skipped:
- 00000170  5B					POP EBX
- 00000171  59					POP ECX
+ 000001E6  E2 F7					LOOP _int
+ 000001E8					skipped:
+ 000001E8  5B					POP EBX
+ 000001E9  59					POP ECX
 						
- 00000172  03 D8				ADD EBX, EAX
+ 000001EA  03 D8				ADD EBX, EAX
 
 						; plus or minus found
- 00000174					_plusOrMinus:
+ 000001EC					_plusOrMinus:
 
- 00000174  E2 CC				LOOP _checkChar
-
- 00000176  8B 45 F8			MOV EAX, userNumberSizeProc
- 00000179  8B 55 F0			MOV EDX, userIntegerProc
+ 000001EC  E2 C8				LOOP _checkChar
 					
- 0000017C  81 FB 7FFFFFFF		CMP	EBX, 2147483647
- 00000182  0F 87 FFFFFF77		JA	_tryAgain
+
+					; save integer and size
+ 000001EE  8B 45 F8			MOV EAX, userNumberSizeProc
+ 000001F1  8B 55 F0			MOV EDX, userIntegerProc
+					
+ 000001F4  81 FB 7FFFFFFF		CMP	EBX, 2147483647
+ 000001FA  0F 87 FFFFFF6E		JA	_tryAgain
+ 00000200  0F 80 FFFFFF68		JO	_tryAgain
 
 					; Add sign if there is one
- 00000188  52					PUSH	EDX
- 00000189  50					PUSH	EAX
- 0000018A  8B 55 E8				MOV		EDX, signProc
- 0000018D  8B 02				MOV		EAX, [EDX]
+ 00000206  52					PUSH	EDX
+ 00000207  50					PUSH	EAX
+ 00000208  8B 55 E8				MOV		EDX, signProc
+ 0000020B  8B 02				MOV		EAX, [EDX]
 						
- 0000018F  83 F8 2D				CMP     EAX, 45
- 00000192  75 0A				JNE		_noSIgn
+ 0000020D  83 F8 2D				CMP     EAX, 45
+ 00000210  75 0A				JNE		_noSIgn
 
 						;make negative 
- 00000194  6B DB FF				imul	EBX, -1	
+ 00000212  6B DB FF				imul	EBX, -1	
 
- 00000197  B8 00000000				MOV		EAX, 0
- 0000019C  89 02				MOV		[EDX], EAX			; reset sign
+ 00000215  B8 00000000				MOV		EAX, 0
+ 0000021A  89 02				MOV		[EDX], EAX			; reset sign
 
- 0000019E					_noSIgn:
- 0000019E  58					POP		EAX
- 0000019F  5A					POP		EDX
+ 0000021C					_noSIgn:
+ 0000021C  58					POP		EAX
+ 0000021D  5A					POP		EDX
 
 
+					; move value to variable address
+ 0000021E  89 1A			MOV [EDX], EBX
+ 00000220  8B 4D F8			MOV ECX, userNumberSizeProc
+ 00000223  8B 55 10			MOV EDX, [EBP + 16]
+ 00000226  89 0A			MOV [EDX], ECX
 
- 000001A0  89 1A			MOV [EDX], EBX
- 000001A2  8B 4D F8			MOV ECX, userNumberSizeProc
- 000001A5  8B 55 10			MOV EDX, [EBP + 16]
- 000001A8  89 0A			MOV [EDX], ECX
 					; restore registers
- 000001AA  5E				POP			ESI
- 000001AB  5F				POP			EDI
- 000001AC  5A				POP			EDX
- 000001AD  5B				POP			EBX
- 000001AE  59				POP			ECX
- 000001AF  58				POP			EAX
+ 00000228  5E				POP			ESI
+ 00000229  5F				POP			EDI
+ 0000022A  5A				POP			EDX
+ 0000022B  5B				POP			EBX
+ 0000022C  59				POP			ECX
+ 0000022D  58				POP			EAX
 					
- 000001B0  C9		   *	    leave  
- 000001B1  C2 0018			RET 24
- 000001B4			Readval ENDP
+ 0000022E  C9		   *	    leave  
+ 0000022F  C2 0018			RET 24
+ 00000232			Readval ENDP
 
 				; ---------------------------------------------------------------------------------
-				; Name: fillArray
+				; Name: Writeval
 				; 
-				; The procedure fills an array of ARRAYSIZE between the range of LO and HI.
+				; Will take a signed number, convert it to string and display it. 
 				;
-				; Preconditions: someArray, LO, HI, ARRAYSIZE exist
+				; Preconditions: variable addresses exist
 				;
-				; Postconditions: someArray is updated with new random values. EDI changed.
+				; Postconditions: varialbes are updated without being called on. 
 				;
-				; Receives:	randArray (reference/input-output), ARRAYSIZE/HI/LO (value/input).
+				; Receives:	intToStringProc (value/input), outToStringProc (reference/input-output) stringSize (reference/input).
 				;
-				; Returns: memory variable returned in EAX
+				; Returns: values are updated without changing registers or calling variables direactly
 				; ---------------------------------------------------------------------------------
- 000001B4			Writeval PROC
+ 00000232			Writeval PROC
 					LOCAL		intToStringProc: SDWORD, outToStringProc: SDWORD, stringSize: SDWORD
 
 
 					; preserver registers
- 000001B4  55		   *	    push   ebp
- 000001B5  8B EC	   *	    mov    ebp, esp
- 000001B7  83 C4 F4	   *	    add    esp, 0FFFFFFF4h
- 000001BA  50				PUSH		EAX
- 000001BB  53				PUSH		EBX
- 000001BC  51				PUSH		ECX
- 000001BD  52				PUSH		EDX
- 000001BE  57				PUSH		EDI
+ 00000232  55		   *	    push   ebp
+ 00000233  8B EC	   *	    mov    ebp, esp
+ 00000235  83 C4 F4	   *	    add    esp, 0FFFFFFF4h
+ 00000238  50				PUSH		EAX
+ 00000239  53				PUSH		EBX
+ 0000023A  51				PUSH		ECX
+ 0000023B  52				PUSH		EDX
+ 0000023C  57				PUSH		EDI
 					
- 000001BF  8B 45 0C			MOV			EAX, [EBP + 12]
- 000001C2  89 45 F8			MOV			outToStringProc, EAX
+					; add arguments to local variables
+ 0000023D  8B 45 0C			MOV			EAX, [EBP + 12]
+ 00000240  89 45 F8			MOV			outToStringProc, EAX
+ 00000243  8B 7D F8			MOV			EDI, outToStringProc
 
- 000001C5  8B 55 08			MOV			EDX, [EBP + 8]
+ 00000246  8B 55 08			MOV			EDX, [EBP + 8]
 					
 					;check if negative
- 000001C8  83 FA 00			CMP			EDX, 0
- 000001CB  7D 03			JGE			_notNeg
- 000001CD  6B D2 FF				imul	EDX, -1	
+ 00000249  83 FA 00			CMP			EDX, 0
+ 0000024C  7D 0A			JGE			_notNeg
+						
+ 0000024E  6B D2 FF				imul	EDX, -1			; makes positive for string transform
+ 00000251  B8 0000002D				MOV		EAX, 45
+						
+ 00000256  FD					STD
+ 00000257  AA					STOSB					; store sign
+
 					
- 000001D0				_notNeg:
- 000001D0  89 55 FC				MOV			intToStringProc, EDX
+ 00000258				_notNeg:
+ 00000258  89 55 FC				MOV			intToStringProc, EDX
 					
-
-
- 000001D3  8B 7D F8			MOV			EDI, outToStringProc
-
- 000001D6  8B C2			MOV			EAX, EDX
+ 0000025B  8B C2			MOV			EAX, EDX
 					
-					
- 000001D8  B9 00000001			MOV			ECX, 1
- 000001DD  FD				STD
- 000001DE				_intToStringLoop:
+					; set up loop and direction flag
+ 0000025D  B9 00000001			MOV			ECX, 1
+ 00000262  FD				STD
+ 00000263				_intToStringLoop:
 
- 000001DE  BB 0000000A				MOV		EBX, 10
- 000001E3  99					CDQ
- 000001E4  F7 FB				idiv	EBX
+ 00000263  BB 0000000A				MOV		EBX, 10
+ 00000268  99					CDQ
+ 00000269  F7 FB				idiv	EBX
 
- 000001E6  83 FA 00				cmp EDX, 0
+ 0000026B  83 FA 00				cmp EDX, 0
 						
 						; if remainder is zero, go to second check to see if int is done
- 000001E9  74 14				JE _skipped1
- 000001EB					_skippedBack:
- 000001EB  83 C1 01				ADD ECX, 1
+ 0000026E  74 14				JE _skipped1
+ 00000270					_skippedBack:
+ 00000270  83 C1 01				ADD ECX, 1
+ 00000273					_skippedBack1:
 						
+ 00000273  BB 00000000				MOV		EBX, 0
+ 00000278  50					PUSH EAX
+ 00000279  8B C2				MOV		EAX, EDX
+ 0000027B  83 C0 30				ADD		EAX, 48
 						
- 000001EE  BB 00000000				MOV		EBX, 0
- 000001F3  50					PUSH EAX
- 000001F4  8B C2				MOV		EAX, EDX
- 000001F6  83 C0 30				ADD		EAX, 48
+ 0000027E  AA					STOSB
 						
- 000001F9  AA					STOSB
+ 0000027F  58					POP EAX
 						
- 000001FA  58					POP EAX
-						
- 000001FB  E2 E1				LOOP _intToStringLoop
+ 00000280  E2 E1				LOOP _intToStringLoop
 
 					; special case if there is a digit with a zero, does not terminate wrongly
- 000001FD  EB 0B			JMP _skipOver
- 000001FF				_skipped1:
- 000001FF  83 F8 00				cmp EAX, 0
- 00000202  75 E7				JNE _skippedBack
- 00000204  83 7D FC 00				cmp intToStringProc, 0
+ 00000282  EB 0B			JMP _skipOver
+
+
+					; verifying if the loop should stop
+ 00000284				_skipped1:
+ 00000284  83 F8 00				cmp EAX, 0
+ 00000287  75 E7				JNE _skippedBack
+ 00000289  83 7D FC 00				cmp intToStringProc, 0
 						
- 00000208  74 E1				JE	_skippedBack			; single zero case
-
- 0000020A				_skipOver:
- 0000020A  FC				CLD
- 0000020B  89 7D F8			MOV outToStringProc, EDI
- 0000020E  83 45 F8 01			ADD outToStringProc, 1
-					mDisplayString outToStringProc
- 00000212  52		     1		PUSH		EDX
- 00000213  8B 55 F8	     1		MOV			EDX, outToStringProc
- 00000216  E8 00000000 E     1		CALL		WriteString
- 0000021B  5A		     1		POP			EDX
-					;call WriteString
+ 0000028D  74 E4				JE	_skippedBack1			; single zero case
 					
- 0000021C  5F				POP			EDI
- 0000021D  5A				POP			EDX
- 0000021E  59				POP			ECX
- 0000021F  5B				POP			EBX
- 00000220  58				POP			EAX
+					; display the value 
+ 0000028F				_skipOver:
+ 0000028F  FC				CLD
+ 00000290  89 7D F8			MOV outToStringProc, EDI
+ 00000293  83 45 F8 01			ADD outToStringProc, 1
+					mDisplayString outToStringProc
+ 00000297  52		     1		PUSH		EDX
+ 00000298  8B 55 F8	     1		MOV			EDX, outToStringProc
+ 0000029B  E8 00000000 E     1		CALL		WriteString
+ 000002A0  5A		     1		POP			EDX
+					; call WriteString
+					
+
+					; restore registers
+ 000002A1  5F				POP			EDI
+ 000002A2  5A				POP			EDX
+ 000002A3  59				POP			ECX
+ 000002A4  5B				POP			EBX
+ 000002A5  58				POP			EAX
 
 
- 00000221  C9		   *	    leave  
- 00000222  C2 0008			RET 8
- 00000225			Writeval ENDP
-Proj6_baxs.asm(426) : warning A6004:procedure argument or local not referenced : stringSize
+ 000002A6  C9		   *	    leave  
+ 000002A7  C2 0008			RET 8
+ 000002AA			Writeval ENDP
+Proj6_baxs.asm(551) : warning A6004:procedure argument or local not referenced : stringSize
 
 				END main
-Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/11/21 22:13:57
+Microsoft (R) Macro Assembler Version 14.29.30038.1	    08/12/21 01:01:05
 <Project 6 - String Primitives and Macros     (Proj6_baxs.as  Symbols 2 - 1
 
 
@@ -623,8 +807,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 000000E2 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000225 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000022E Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000002AA Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -694,22 +878,22 @@ ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Readval  . . . . . . . . . . . .	P Near	 000000AA _TEXT	Length= 0000010A Public STDCALL
+Readval  . . . . . . . . . . . .	P Near	 00000119 _TEXT	Length= 00000119 Public STDCALL
   userNumberProc . . . . . . . .	DWord	 bp - 00000004
   userNumberSizeProc . . . . . .	DWord	 bp - 00000008
   enterNumberProc  . . . . . . .	DWord	 bp - 0000000C
   userIntegerProc  . . . . . . .	DWord	 bp - 00000010
   wrongNumProc . . . . . . . . .	DWord	 bp - 00000014
   signProc . . . . . . . . . . .	DWord	 bp - 00000018
-  _setPlus . . . . . . . . . . .	L Near	 000000DC _TEXT	
-  _setMinus  . . . . . . . . . .	L Near	 000000EF _TEXT	
-  _tryAgain  . . . . . . . . . .	L Near	 000000FF _TEXT	
-  _skippWrongMessage . . . . . .	L Near	 0000010E _TEXT	
-  _checkChar . . . . . . . . . .	L Near	 00000142 _TEXT	
-  _int . . . . . . . . . . . . .	L Near	 00000167 _TEXT	
-  skipped  . . . . . . . . . . .	L Near	 00000170 _TEXT	
-  _plusOrMinus . . . . . . . . .	L Near	 00000174 _TEXT	
-  _noSIgn  . . . . . . . . . . .	L Near	 0000019E _TEXT	
+  _setPlus . . . . . . . . . . .	L Near	 0000014B _TEXT	
+  _setMinus  . . . . . . . . . .	L Near	 0000015E _TEXT	
+  _tryAgain  . . . . . . . . . .	L Near	 0000016E _TEXT	
+  _skippWrongMessage . . . . . .	L Near	 0000017D _TEXT	
+  _checkChar . . . . . . . . . .	L Near	 000001B6 _TEXT	
+  _int . . . . . . . . . . . . .	L Near	 000001DF _TEXT	
+  skipped  . . . . . . . . . . .	L Near	 000001E8 _TEXT	
+  _plusOrMinus . . . . . . . . .	L Near	 000001EC _TEXT	
+  _noSIgn  . . . . . . . . . . .	L Near	 0000021C _TEXT	
 SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -747,18 +931,20 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Writeval . . . . . . . . . . . .	P Near	 000001B4 _TEXT	Length= 00000071 Public STDCALL
+Writeval . . . . . . . . . . . .	P Near	 00000232 _TEXT	Length= 00000078 Public STDCALL
   intToStringProc  . . . . . . .	DWord	 bp - 00000004
   outToStringProc  . . . . . . .	DWord	 bp - 00000008
   stringSize . . . . . . . . . .	DWord	 bp - 0000000C
-  _notNeg  . . . . . . . . . . .	L Near	 000001D0 _TEXT	
-  _intToStringLoop . . . . . . .	L Near	 000001DE _TEXT	
-  _skippedBack . . . . . . . . .	L Near	 000001EB _TEXT	
-  _skipped1  . . . . . . . . . .	L Near	 000001FF _TEXT	
-  _skipOver  . . . . . . . . . .	L Near	 0000020A _TEXT	
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000AA Public STDCALL
+  _notNeg  . . . . . . . . . . .	L Near	 00000258 _TEXT	
+  _intToStringLoop . . . . . . .	L Near	 00000263 _TEXT	
+  _skippedBack . . . . . . . . .	L Near	 00000270 _TEXT	
+  _skippedBack1  . . . . . . . .	L Near	 00000273 _TEXT	
+  _skipped1  . . . . . . . . . .	L Near	 00000284 _TEXT	
+  _skipOver  . . . . . . . . . .	L Near	 0000028F _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000119 Public STDCALL
   _integerLoop . . . . . . . . .	L Near	 0000002F _TEXT	
   displayLoop  . . . . . . . . .	L Near	 00000082 _TEXT	
+  addLoop  . . . . . . . . . . .	L Near	 000000AD _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -778,7 +964,7 @@ Symbols:
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
 ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
-ARRAYSIZE  . . . . . . . . . . .	Number	 00000002h   
+ARRAYSIZE  . . . . . . . . . . .	Number	 0000000Ah   
 CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
 CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
@@ -978,17 +1164,19 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+averageMessage . . . . . . . . .	Byte	 000001FA _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+bye  . . . . . . . . . . . . . .	Byte	 00000226 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 description  . . . . . . . . . .	Byte	 00000035 _DATA	
-enterNumber  . . . . . . . . . .	Byte	 0000006F _DATA	
+enterNumber  . . . . . . . . . .	Byte	 00000167 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-intArray . . . . . . . . . . . .	DWord	 00000067 _DATA	
-intToString  . . . . . . . . . .	DWord	 0000005F _DATA	
+intArray . . . . . . . . . . . .	DWord	 0000013F _DATA	
+intToString  . . . . . . . . . .	DWord	 00000137 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -997,15 +1185,16 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 nameAndTitle . . . . . . . . . .	Byte	 00000000 _DATA	
-numbersEntered . . . . . . . . .	Byte	 00000096 _DATA	
+numbersEntered . . . . . . . . .	Byte	 0000018E _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-sign . . . . . . . . . . . . . .	DWord	 00000063 _DATA	
-space  . . . . . . . . . . . . .	Byte	 000000E0 _DATA	
-userInteger  . . . . . . . . . .	DWord	 0000005B _DATA	
-userNumberSize . . . . . . . . .	DWord	 00000057 _DATA	
-userNumber . . . . . . . . . . .	DWord	 00000053 _DATA	
+sign . . . . . . . . . . . . . .	DWord	 0000013B _DATA	
+space  . . . . . . . . . . . . .	Byte	 000001D8 _DATA	
+sumMessage . . . . . . . . . . .	Byte	 000001DA _DATA	
+userInteger  . . . . . . . . . .	DWord	 00000133 _DATA	
+userNumberSize . . . . . . . . .	DWord	 0000012F _DATA	
+userNumber . . . . . . . . . . .	DWord	 0000012B _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
-wrongNumber  . . . . . . . . . .	Byte	 000000B9 _DATA	
+wrongNumber  . . . . . . . . . .	Byte	 000001B1 _DATA	
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
